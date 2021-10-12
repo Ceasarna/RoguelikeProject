@@ -12,7 +12,7 @@ public abstract class Character {
     private int spd;
     private int currentSpd;
 
-    public Character(int atkMod, int evsMod, int maxHealth, int gold, int baseDmgMin, int baseDmgMax, int spd, int currentSpd){
+    public Character(int atkMod, int evsMod, int maxHealth, int gold, int baseDmgMin, int baseDmgMax, int spd){
         this.atkMod = atkMod;
         currentAtkMod = atkMod;
         this.evsMod = evsMod;
@@ -22,7 +22,7 @@ public abstract class Character {
         this.baseDmgMin = baseDmgMin;
         this.baseDmgMax = baseDmgMax;
         this.spd = spd;
-        this.spd = currentSpd;
+        currentSpd = spd;
     }
 
     public int getAtkMod() {
