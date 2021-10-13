@@ -1,4 +1,6 @@
-public abstract class Character {
+public abstract class Character implements Comparable<Character> {
+
+    private DiceRoller diceRoller = new DiceRoller();
 
     private int atkMod;
     private int currentAtkMod;
@@ -11,8 +13,10 @@ public abstract class Character {
     private int baseDmgMax;
     private int spd;
     private int currentSpd;
+    private int initiative;
+    private String name;
 
-    public Character(int atkMod, int evsMod, int maxHealth, int gold, int baseDmgMin, int baseDmgMax, int spd){
+    public Character(int atkMod, int evsMod, int maxHealth, int gold, int baseDmgMin, int baseDmgMax, int spd, String name){
         this.atkMod = atkMod;
         currentAtkMod = atkMod;
         this.evsMod = evsMod;
@@ -23,6 +27,7 @@ public abstract class Character {
         this.baseDmgMax = baseDmgMax;
         this.spd = spd;
         currentSpd = spd;
+        this.name = name;
     }
 
     public int getAtkMod() {
@@ -69,6 +74,14 @@ public abstract class Character {
         return currentSpd;
     }
 
+    public int getInitiative() {
+        return initiative;
+    }
+
+    public String getName() {
+        return name;
+    }
+
     public void changeCurrentHealth(int mod){
         if(currentHealth + mod > maxHealth){
             currentHealth = maxHealth;
@@ -112,4 +125,26 @@ public abstract class Character {
         currentSpd += mod;
     }
 
+    public void rollForInitiative(){
+        initiative = diceRoller.roll1d100() + currentSpd;
+    }
+
+    public int rollBaseDmg(){
+        return diceRoller.rollWithinRange(baseDmgMin, baseDmgMax);
+    }
+
+    @Override
+    public int compareTo(Character o) {
+        if(initiative > o.getInitiative()){
+            return 1;
+        } else if (initiative < o.getInitiative()){
+            return -1;
+        } else if (currentSpd > o.getCurrentSpd()){
+            return 1;
+        } else if (currentSpd < o.getCurrentSpd()){
+            return -1;
+        } else {
+            return 0;
+        }
+    }
 }
