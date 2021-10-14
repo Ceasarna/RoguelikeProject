@@ -15,6 +15,8 @@ public abstract class Character implements Comparable<Character> {
     private int currentSpd;
     private int initiative;
     private String name;
+    private final static int MAX_MANA = 100;
+    private int currentMana;
 
     public Character(int atkMod, int evsMod, int maxHealth, int gold, int baseDmgMin, int baseDmgMax, int spd, String name){
         this.atkMod = atkMod;
@@ -28,6 +30,7 @@ public abstract class Character implements Comparable<Character> {
         this.spd = spd;
         currentSpd = spd;
         this.name = name;
+        currentMana = MAX_MANA;
     }
 
     public int getAtkMod() {
@@ -82,6 +85,10 @@ public abstract class Character implements Comparable<Character> {
         return name;
     }
 
+    public int getMana(){
+        return currentMana;
+    }
+
     public void changeCurrentHealth(int mod){
         if(currentHealth + mod > maxHealth){
             currentHealth = maxHealth;
@@ -123,6 +130,10 @@ public abstract class Character implements Comparable<Character> {
 
     public void changeCurrentSpd(int mod){
         currentSpd += mod;
+    }
+
+    public void changeCurrentMana(int mod){
+        currentMana += mod;
     }
 
     public void rollForInitiative(){
