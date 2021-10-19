@@ -39,7 +39,7 @@ public abstract class Character implements Comparable<Character> {
         }
         this.baseDmgMin = baseDmgMin;
         if(baseDmgMax < baseDmgMin){
-            throw new IllegalArgumentException("Maximum base damage must be equal to or higher than minimum base damage");
+            throw new IllegalArgumentException("Maximum base damage must be equal to or higher than minimum base damage!");
         }
         this.baseDmgMax = baseDmgMax;
         this.spd = spd;
