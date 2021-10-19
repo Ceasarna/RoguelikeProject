@@ -1,5 +1,7 @@
 public abstract class Character implements Comparable<Character> {
 
+    private final static int MAX_MANA = 100;
+
     private DiceRoller diceRoller = new DiceRoller();
 
     private int atkMod;
@@ -8,29 +10,38 @@ public abstract class Character implements Comparable<Character> {
     private int currentEvsMod;
     private int currentHealth;
     private int maxHealth;
-    private int gold;
     private int baseDmgMin;
     private int baseDmgMax;
     private int spd;
     private int currentSpd;
     private int initiative;
     private String name;
-    private final static int MAX_MANA = 100;
     private int currentMana;
+
+    protected int gold;
 
     public Character(int atkMod, int evsMod, int maxHealth, int gold, int baseDmgMin, int baseDmgMax, int spd, String name){
         this.atkMod = atkMod;
         currentAtkMod = atkMod;
         this.evsMod = evsMod;
         currentEvsMod = evsMod;
-        this.maxHealth = maxHealth;
-        this.gold = gold;
-        this.baseDmgMin = baseDmgMin;
-        if(baseDmgMin > baseDmgMax){
-            throw new IllegalArgumentException("BaseDmgMin cannot be higher than BaseDmgMax");
-        }else{
-            this.baseDmgMax = baseDmgMax;
+        if(maxHealth < 1){
+            throw new IllegalArgumentException("Max Health cannot be less than 1");
         }
+        this.maxHealth = maxHealth;
+        currentHealth = maxHealth;
+        if(gold < 0){
+            throw new IllegalArgumentException("Gold cannot be negative");
+        }
+        this.gold = gold;
+        if(baseDmgMin < 0){
+            throw new IllegalArgumentException("Minimum base damage cannot be negative");
+        }
+        this.baseDmgMin = baseDmgMin;
+        if(baseDmgMax < baseDmgMin){
+            throw new IllegalArgumentException("Maximum base damage must be equal to or higher than minimum base damage");
+        }
+        this.baseDmgMax = baseDmgMax;
         this.spd = spd;
         currentSpd = spd;
         this.name = name;
@@ -101,12 +112,15 @@ public abstract class Character implements Comparable<Character> {
         currentHealth += mod;
     }
 
-    public void increaseMaxHealth(int mod){
-        if(mod <= 0){
-            throw new IllegalArgumentException("mod must be >0");
-        }
+    public void changeMaxHealth(int mod){
         maxHealth += mod;
         currentHealth += mod;
+        if(maxHealth < 1){
+            maxHealth = 1;
+        }
+        if(currentHealth < 1){
+            currentHealth = 1;
+        }
     }
 
     public void changeAtkMod(int mod){
