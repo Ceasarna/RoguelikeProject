@@ -14,8 +14,4 @@ public class Slime extends Monster{
         return SLIME_EXP_DROP;
     }
 
-    @Override
-    void basicAttack() {
-
-    }
 }

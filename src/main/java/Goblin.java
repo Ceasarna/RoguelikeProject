@@ -5,16 +5,10 @@ public class Goblin extends Monster{
     public Goblin(int atkMod, int evsMod, int maxHealth, int gold, int baseDmgMin, int baseDmgMax, int spd, String name){
         super(atkMod, evsMod, maxHealth, gold, baseDmgMin, baseDmgMax, spd, name);
         this.monsterType = "Goblin";
-
     }
-
     @Override
     int giveEXP() {
         return GOBLIN_EXP_DROP;
     }
 
-    @Override
-    void basicAttack() {
-
-    }
 }
