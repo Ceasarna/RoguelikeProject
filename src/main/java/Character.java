@@ -26,7 +26,11 @@ public abstract class Character implements Comparable<Character> {
         this.maxHealth = maxHealth;
         this.gold = gold;
         this.baseDmgMin = baseDmgMin;
-        this.baseDmgMax = baseDmgMax;
+        if(baseDmgMin > baseDmgMax){
+            throw new IllegalArgumentException("BaseDmgMin cannot be higher than BaseDmgMax");
+        }else{
+            this.baseDmgMax = baseDmgMax;
+        }
         this.spd = spd;
         currentSpd = spd;
         this.name = name;

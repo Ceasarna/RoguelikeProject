@@ -75,4 +75,8 @@ public class SpellBook {
         spellBook.add(utilitySlot);
         utilitySlot = null;
     }
+
+    public void writeAllSpells(){
+
+    }
 }

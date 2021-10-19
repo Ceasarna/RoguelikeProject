@@ -6,7 +6,11 @@ public class DamageMagic extends Magic{
     public DamageMagic(int spellCost, String spellName, int minDmg, int maxDmg){
         super(spellCost, spellName);
         this.minDmg = minDmg;
-        this.maxDmg = maxDmg;
+        if(minDmg > maxDmg){
+            throw new IllegalArgumentException("MinDmg cannot be higher than MaxDmg");
+        }else{
+            this.maxDmg = maxDmg;
+        }
     }
 
     public int getMinDmg() {
