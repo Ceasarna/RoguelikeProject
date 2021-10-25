@@ -5,8 +5,7 @@
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class PlayerCharacterTest {
 
@@ -105,6 +104,11 @@ public class PlayerCharacterTest {
     public void testExp(){
         int expectedExp = 1000;
         assertEquals(expectedExp, correctPlayer.getExp());
+    }
+
+    @Test
+    public void testInventory(){
+        assertNotNull(correctPlayer.getInventory());
     }
 
     @Test
