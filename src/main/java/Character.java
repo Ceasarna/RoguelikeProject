@@ -1,26 +1,35 @@
+/*Toppen i klasstrukturen för karaktärer som sedan ärvs av både PlayerCharacter och Monster.*/
+
 public class Character implements Comparable<Character> {
 
-    private final static int MAX_MANA = 100;
+    private static final int MAX_MANA = 100;
 
-    private DiceRoller diceRoller = new DiceRoller();
+    //En karaktärs basskada och namn är konstant från skapandet och kan därför vara final
+    private final int baseDmgMin;
+    private final int baseDmgMax;
+    private final String name;
 
+    //Alla grundegenskaper som behöver kunna ändras
     private int atkMod;
     private int currentAtkMod;
     private int evsMod;
     private int currentEvsMod;
     private int currentHealth;
     private int maxHealth;
-    private int baseDmgMin;
-    private int baseDmgMax;
     private int spd;
     private int currentSpd;
     private int initiative;
-    private String name;
     private int currentMana;
 
-    protected int gold;
+    //En hjälpklass för att hantera slump
+    protected DiceRoller diceRoller = new DiceRoller();
 
-    public Character(int atkMod, int evsMod, int maxHealth, int gold, int baseDmgMin, int baseDmgMax, int spd, String name){
+    //Dessa har metoder som behöver komma åt dem i subklasserna, därav protected
+    protected int gold;
+    protected int lvl;
+
+    //Konstruktorn för klassen. Den är fullständigt enorm, men behöver vara det pga alla parametrar
+    public Character(int atkMod, int evsMod, int maxHealth, int gold, int baseDmgMin, int baseDmgMax, int spd, String name, int lvl){
         this.atkMod = atkMod;
         currentAtkMod = atkMod;
         this.evsMod = evsMod;
@@ -51,10 +60,21 @@ public class Character implements Comparable<Character> {
         }
         this.name = name;
         currentMana = MAX_MANA;
+        if(lvl < 1){
+            throw new IllegalArgumentException("lvl must be at least 1");
+        }
+        this.lvl = lvl;
     }
 
+    //Denna set-metod behövs för att tvinga klassen att använda vårat mock-objekt som tar bort slumpen
     public void setDiceRoller(DiceRoller diceRoller){
         this.diceRoller = diceRoller;
+    }
+
+    //Alla get-metoder
+
+    public int getLvl(){
+        return lvl;
     }
 
     public int getAtkMod() {
@@ -113,7 +133,8 @@ public class Character implements Comparable<Character> {
         return currentMana;
     }
 
-    public void changeCurrentHealth(int mod){
+    //Höjer eller sänker den nuvarande hälsan
+    public void modifyCurrentHealth(int mod){
         if(currentHealth + mod > maxHealth){
             currentHealth = maxHealth;
             return;
@@ -121,9 +142,10 @@ public class Character implements Comparable<Character> {
         currentHealth += mod;
     }
 
-    public void changeMaxHealth(int mod){
+    //Höjer eller sänker storleken på karaktärens hälsomätare och hälsa.
+    public void modifyMaxHealth(int mod){
         maxHealth += mod;
-        currentHealth += mod;
+        modifyCurrentHealth(mod);
         if(maxHealth < 1){
             maxHealth = 1;
         }
@@ -132,45 +154,61 @@ public class Character implements Comparable<Character> {
         }
     }
 
-    public void changeAtkMod(int mod){
+    //Höjer eller sänker karaktärens nuvarande- och baschans att träffa med en attack
+    public void modifyAtkMod(int mod){
         atkMod += mod;
-        changeCurrentAtkMod(mod);
+        modifyCurrentAtkMod(mod);
     }
 
-    public void changeEvsMod(int mod){
-        evsMod += mod;
-        changeCurrentEvsMod(mod);
-    }
-
-    public void changeCurrentAtkMod(int mod){
+    //Höjer eller sänker karaktärens nuvarande chans att träffa med en attack
+    public void modifyCurrentAtkMod(int mod){
         currentAtkMod += mod;
     }
 
-    public void changeCurrentEvsMod(int mod){
+    //Höjer eller sänker karaktärens nuvarande- och baschans att undvika en attack
+    public void modifyEvsMod(int mod){
+        evsMod += mod;
+        modifyCurrentEvsMod(mod);
+    }
+
+    //Höjer eller sänker karaktärens nuvarande chans att undvika en attack
+    public void modifyCurrentEvsMod(int mod){
         currentEvsMod += mod;
     }
 
-    public void changeSpd(int mod){
+    //Höjer eller sänker karaktärens nuvarande- och bas-initiativbonus
+    public void modifySpd(int mod){
         spd += mod;
-        changeCurrentSpd(mod);
+        modifyCurrentSpd(mod);
     }
 
-    public void changeCurrentSpd(int mod){
+    //Höjer eller sänker karaktärens nuvarande initiativbonus
+    public void modifyCurrentSpd(int mod){
         currentSpd += mod;
     }
 
-    public void changeCurrentMana(int mod){
+    //Höjer eller sänker karaktärens nuvarande mana-pool
+    public void modifyCurrentMana(int mod){
         currentMana += mod;
+        if(currentMana < 0){
+            currentMana = 1;
+        }
+        if(currentMana > MAX_MANA){
+            currentMana = MAX_MANA;
+        }
     }
 
+    //Genererar karaktärens initiativ med hjälp av DiceRoller-klassen
     public void rollForInitiative(){
         initiative = diceRoller.roll1d100() + currentSpd;
     }
 
-    public int rollBaseDmg(){
+    //Slår karaktärens skada utifrån dess basskada
+    public int rollDmg(){
         return diceRoller.rollWithinRange(baseDmgMin, baseDmgMax);
     }
 
+    //Jämför två karaktärer för att beräkna initiativordning
     @Override
     public int compareTo(Character o) {
         if(initiative > o.getInitiative()){
