@@ -24,6 +24,8 @@ public class Character implements Comparable<Character> {
     //En hjälpklass för att hantera slump
     protected DiceRoller diceRoller = new DiceRoller();
 
+    protected SpellBook spellBook;
+
     //Dessa har metoder som behöver komma åt dem i subklasserna, därav protected
     protected int gold;
     protected int lvl;
@@ -64,6 +66,7 @@ public class Character implements Comparable<Character> {
             throw new IllegalArgumentException("lvl must be at least 1");
         }
         this.lvl = lvl;
+        this.spellBook = new SpellBook(this);
     }
 
     //Denna set-metod behövs för att tvinga klassen att använda vårat mock-objekt som tar bort slumpen
@@ -135,6 +138,10 @@ public class Character implements Comparable<Character> {
 
     public DiceRoller getDiceRoller() {
         return diceRoller;
+    }
+
+    public SpellBook getSpellBook(){
+        return spellBook;
     }
 
     //Höjer eller sänker den nuvarande hälsan
