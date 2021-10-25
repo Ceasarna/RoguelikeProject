@@ -1,82 +1,180 @@
+// Ett utrymme för magi att sparas och påverka karaktären
+
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class SpellBook {
 
+    // Plater för de olika typer av magi som en karaktär kan erhålla
     private DamageMagic damageSlot;
     private HealingMagic healingSlot;
     private UtilityMagic utilitySlot;
 
+    // Ägaren av detta utrymme
+    private final Character owner;
+
+    // Lista som används för magi som spelaren vill behålla
     ArrayList<Magic> spellBook = new ArrayList<>();
 
+    // Konstruktor
+    public SpellBook(Character owner){
+        this.owner = owner;
+    }
+
+    // Returnerar magi för skada, annars null
     public DamageMagic getDamageSlot(){
         return damageSlot;
     }
 
+    // Returnerar magi för återupphämtning, annars null
     public HealingMagic getHealingSlot(){
         return healingSlot;
     }
 
+    // Returnerar magi för funktionalitet, annars null
     public UtilityMagic getUtilitySlot(){
         return utilitySlot;
     }
 
+    // Lägger till magi till listan av magi
     public void pickUpSpell(Magic spell){
         spellBook.add(spell);
     }
 
+    // Tar bort magi från listan av magi
     public void dropSpell(Magic spell){
         spellBook.remove(spell);
     }
 
+    // Hämtar en omodifierbar lista utav listan av magi
+    public List<Magic> getSpellBook() {
+        return Collections.unmodifiableList(spellBook);
+    }
+
+    // Returnera en kopia av magin som gör skada, i användning för Combat metoder
+    public DamageMagic useDamageSpell(){
+        checkDamageSlot();
+        DamageMagic copyDamageSlot = new DamageMagic(damageSlot);
+        unEquipDamageSpell();
+        return copyDamageSlot;
+    }
+
+    // Kollar att platsen för skademagi inte är null
+    private void checkDamageSlot(){
+        if(damageSlot == null){
+            throw new IllegalStateException("No DamageMagic is Equipped");
+        }
+    }
+
+    // Returnerar en kopia av magin som återupphämtar, i användning för Combat metoder
+    public HealingMagic useHealingSpell(){
+        checkHealingSlot();
+        HealingMagic copyHealingSlot = new HealingMagic(healingSlot);
+        unEquipHealingSpell();
+        return copyHealingSlot;
+    }
+
+    // Kollar att platsen för återupphämtningsmagi inte är null
+    private void checkHealingSlot(){
+        if(healingSlot == null){
+            throw new IllegalStateException("No HealingMagic is Equipped");
+        }
+    }
+
+    // Returnerar en kopia av magin för funktionallitet, i användning för Combat metoder
+    public UtilityMagic useUtilitySpell(){
+        checkUtilitySlot();
+        UtilityMagic copyUtilitySlot = new UtilityMagic(utilitySlot);
+        unEquipUtilitySpell();
+        return copyUtilitySlot;
+    }
+
+    // Kollar att platsen för funktionallitetsmagi inte är null
+    private void checkUtilitySlot(){
+        if(utilitySlot == null){
+            throw new IllegalStateException("No utilityMagic is Equipped");
+        }
+    }
+
+    // Sätter vald skademagi i skademagi-platsen, samt lägger undan redan plaserad skademagi ifall den existerar
     public void equipDamageSpell(DamageMagic dmgSpell){
         if(damageSlot != null){
             spellBook.add(damageSlot);
         }
         spellBook.remove(dmgSpell);
         damageSlot = dmgSpell;
+
+        //characterLevel sets new values inside the DamageMagic.
+        int characterLevel = owner.getLvl();
+        damageSlot.setMinDmg(characterLevel);
+        damageSlot.setMaxDmg(characterLevel);
     }
 
+    // Tar av nuvarande skademagi
     public void unEquipDamageSpell(){
-        if(damageSlot == null){
-            throw new IllegalStateException("No DamageMagic is Equipped");
-        }
+        checkDamageSlot();
         spellBook.add(damageSlot);
+
+        //characterLevel sets new values inside the DamageMagic.
+        double characterLevel = owner.getLvl();
+        damageSlot.setMinDmg( 1 / characterLevel);
+        damageSlot.setMaxDmg( 1 / characterLevel);
+
         damageSlot = null;
     }
 
+    // Sätter vald återhämtningsmagi i återhämtningsmagi-platsen, samt lägger undan redan plaserad
+    // återhämtningsmagi ifall den existerar
     public void equipHealingSpell(HealingMagic healSpell){
         if(healingSlot != null){
             spellBook.add(healingSlot);
         }
         spellBook.remove(healSpell);
         healingSlot = healSpell;
+
+        //characterLevel sets new values inside the HealingMagic.
+        int characterLevel = owner.getLvl();
+        healingSlot.setMinHeal(characterLevel);
+        healingSlot.setMaxHeal(characterLevel);
     }
 
+    // Tar av nuvarande återhämtningsmagi
     public void unEquipHealingSpell(){
-        if(healingSlot == null){
-            throw new IllegalStateException("No HealingMagic is Equipped");
-        }
+        checkHealingSlot();
         spellBook.add(healingSlot);
+
+        //characterLevel sets new values inside the HealingMagic.
+        double characterLevel = owner.getLvl();
+        healingSlot.setMinHeal( 1 / characterLevel);
+        healingSlot.setMaxHeal( 1 / characterLevel);
+
         healingSlot = null;
     }
 
+    // Sätter vald funktionallitetsmagi i funktionallitetsmagi-platsen, samt lägger undan redan plaserad
+    // funktionallitetsmagi ifall den existerar
     public void equipUtilitySpell(UtilityMagic utilitySpell){
         if(utilitySlot != null){
             spellBook.add(utilitySlot);
         }
         spellBook.remove(utilitySpell);
         utilitySlot = utilitySpell;
+
+        int characterLevel = owner.getLvl();
+        utilitySpell.setUtilityValue(characterLevel);
     }
 
+    // Tar av nuvarande funktionallitetsmagi
     public void unEquipUtilitySpell(){
         if(utilitySlot == null){
             throw new IllegalStateException("No utilityMagic is Equipped");
         }
         spellBook.add(utilitySlot);
+
+        double characterLevel = owner.getLvl();
+        utilitySlot.setUtilityValue(1 / characterLevel);
+
         utilitySlot = null;
-    }
-
-    public void writeAllSpells(){
-
     }
 }
