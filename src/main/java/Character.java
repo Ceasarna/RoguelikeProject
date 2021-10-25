@@ -44,6 +44,11 @@ public class Character implements Comparable<Character> {
         this.baseDmgMax = baseDmgMax;
         this.spd = spd;
         currentSpd = spd;
+        if(name == null){
+            throw new IllegalArgumentException("Name cannot be null");
+        } else if (name.length() == 0){
+            throw new IllegalArgumentException("Name cannot be empty");
+        }
         this.name = name;
         currentMana = MAX_MANA;
     }
