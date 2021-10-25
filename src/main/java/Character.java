@@ -133,6 +133,10 @@ public class Character implements Comparable<Character> {
         return currentMana;
     }
 
+    public DiceRoller getDiceRoller() {
+        return diceRoller;
+    }
+
     //Höjer eller sänker den nuvarande hälsan
     public void modifyCurrentHealth(int mod){
         if(currentHealth + mod > maxHealth){

@@ -64,7 +64,7 @@ public class PlayerCharacter extends Character {
         }
         exp += newExp;
         int levelsFromNewTotalExp = exp / 1000;
-        int newLevelsFromExp = lvl - levelsFromNewTotalExp;
+        int newLevelsFromExp = levelsFromNewTotalExp - lvl;
 
         while(newLevelsFromExp > 0){
             lvlUp();
