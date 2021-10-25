@@ -7,7 +7,7 @@ public class Goblin extends Monster{
         this.monsterType = "Goblin";
     }
     @Override
-    int giveEXP() {
+    public int giveEXP() {
         return GOBLIN_EXP_DROP;
     }
 

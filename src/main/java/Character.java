@@ -1,4 +1,4 @@
-public abstract class Character implements Comparable<Character> {
+public class Character implements Comparable<Character> {
 
     private final static int MAX_MANA = 100;
 
@@ -46,6 +46,10 @@ public abstract class Character implements Comparable<Character> {
         currentSpd = spd;
         this.name = name;
         currentMana = MAX_MANA;
+    }
+
+    public void setDiceRoller(DiceRoller diceRoller){
+        this.diceRoller = diceRoller;
     }
 
     public int getAtkMod() {

@@ -55,4 +55,7 @@ public class PlayerCharacter extends Character {
         lvl++;
     }
 
+    public int getCurrentExp(){
+        return exp;
+    }
 }
