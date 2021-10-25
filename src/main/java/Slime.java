@@ -10,7 +10,7 @@ public class Slime extends Monster{
     }
 
     @Override
-    int giveEXP() {
+    public int giveEXP() {
         return SLIME_EXP_DROP;
     }
 

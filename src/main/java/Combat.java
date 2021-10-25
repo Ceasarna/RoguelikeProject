@@ -2,30 +2,33 @@ import java.util.*;
 
 public class Combat {
 
-    Character pc;
-    Character monster;
-    int round;
-    //static String cmd1 = "attack", cmd2 = "dodge", cmd3 = "use item", cmd4 = "magic";
+    PlayerCharacter pc;
+    Monster monster;
+    int round = 0;
+    Character[] initiative;
     boolean victory = false;
+    DiceRoller diceRoller = new DiceRoller();
+    List <ModChange> modChanges = new ArrayList<ModChange>();
 
 
-    public Combat(Character pc, Character monster) {
+    public Combat(PlayerCharacter pc, Monster monster) {
         this.pc = pc;
         this.monster = monster;
+        this.initiative = createInitiative();
     }
 
-    public void startCombat(){
+    public void setDiceRoller(DiceRoller diceRoller){
+        this.diceRoller = diceRoller;
+    }
 
-        System.out.println("You are attacked by " + monster);
-        Character[] initiative = participants(pc, monster);
-        Character initiator = initiative[0];
-        if(initiator.equals(pc)){
+    public void startCombat() {
+        System.out.println("You are attacked by " + monster.getName());
+        if (initiative[0].equals(pc)) {
             System.out.println("You go first.");
+        } else {
+            System.out.println("The " + monster.getName() + " attacks first.");
         }
-        else{
-            System.out.println("The enemy attacks first.");
-        }
-        while(!victory){
+        while (!victory) {
             firstTurn(initiative[0]);
             secondTurn(initiative[1]);
             round++;
@@ -51,10 +54,10 @@ public class Combat {
     }
 
     public void characterTurn(){
-        Scanner sc = new Scanner(System.in);
         int command = 0;
         System.out.println("What do you want to do? Type the number of the action.");
         System.out.println("1. Attack /n 2. Dodge /n 3. Use Item /n 4. Magic");
+        Scanner sc = new Scanner(System.in);
         while (command == 0){
             try {
                 command = sc.nextInt();
@@ -63,63 +66,16 @@ public class Combat {
                 }
             }
             catch(IllegalArgumentException i){
-                   characterTurn();
+                characterTurn();
             }
-        turn(pc, monster, command);
+            turn(pc, monster, command);
         }
     }
 
     public void monsterTurn(){
         //Getting the monsters next move here
-        int command = 0;
+        int command = 1;
         turn(monster, pc, command);
-    }
-    public Character getPc() {
-        return pc;
-    }
-
-    public Character getMonster() {
-        return monster;
-    }
-
-    public int getRound(){
-        return round;
-    }
-
-    public static Character[] participants(Character pc, Character monster){
-
-        Character[] initiative = new Character[2];
-        int pcInitiative = pc.getCurrentSpd() + percent();
-        int monsterInitiative = monster.getCurrentSpd() + percent();
-
-        if(pcInitiative > monsterInitiative){
-            initiative[0] = pc;
-            initiative[1] = monster;
-        }
-        else if(monsterInitiative > pcInitiative){
-            initiative[0] = monster;
-            initiative[1] = pc;
-        }
-        else{
-            if(pc.getCurrentSpd() > monster.getCurrentSpd()){
-                initiative[0] = pc;
-                initiative[1] = monster;
-            }
-            else if (monster.getCurrentSpd() > pc.getCurrentSpd()){
-                initiative[0] = monster;
-                initiative[1] = pc;
-            }
-            else{
-                initiative[0] = pc;
-                initiative[1] = monster;
-            }
-        }
-        return initiative;
-    }
-
-    public static int percent(){
-        Random percent = new Random();
-        return percent.nextInt(101);
     }
 
     public void turn(Character user, Character opponent, int command){
@@ -137,47 +93,88 @@ public class Combat {
         }
     }
 
-
-    public void attack(Character attacker, Character defender){
-        System.out.println("You attack.");
-        int chanceToHit = attacker.getCurrentAtkMod() - defender.getCurrentEvsMod();
-        int roll = percent();
-        if(roll <= chanceToHit){
-            int damage = damage(attacker.getBaseDmgMin(), attacker.getBaseDmgMax());
-            defender.changeCurrentHealth(damage);
-            System.out.println("You hit! " + monster + " takes " + damage + " damage.");
-            if (!isAlive(defender)){
-                winner(attacker);
-            }
-        }
-        return;
+    public Character getPc() {
+        return pc;
     }
 
-    public int damage(int minDmg, int maxDmg){
-        int damage = (int)Math.floor(Math.random()*(maxDmg-minDmg+1)+minDmg);
-        return damage;
+    public Character getMonster() {
+        return monster;
+    }
+
+    public Character[] createInitiative() {
+        Character[] initiative = new Character[2];
+        pc.rollForInitiative();
+        monster.rollForInitiative();
+        int result = pc.compareTo(monster);
+        if (result >= 0) {
+            initiative[0] = pc;
+            initiative[1] = monster;
+        } else{
+            initiative[0] = monster;
+            initiative[1] = pc;
+        }
+        return initiative;
+    }
+
+    public void attack(Character attacker, Character defender){
+        System.out.println(attacker.getName() + " attacks.");
+        int toHit = diceRoller.roll1d100() + attacker.getAtkMod();
+        if(toHit >= defender.getEvsMod()){
+            int damage = -1 * attacker.rollBaseDmg();
+            System.out.println("Hit! " + defender.getName() + " takes " + damage*-1 + " points of damage.");
+            takeDamage(attacker, defender, damage);
+        }
+        else{
+            System.out.println("Miss! " + defender.getName() + " dodges the attack.");
+        }
     }
 
     public void dodge(Character dodger){
-        System.out.println("You take a defensive stance.");
+        System.out.println(dodger.getName() + " takes an evasive stance.");
+        ModChange modChange = new ModChange(getRound(), 1, dodger.getEvsMod(), dodger, "Evs");
+        modChanges.add(modChange);
+        modChange.changeMod();
     }
 
-    public boolean isAlive(Character victim){
-        int health = victim.getCurrentHealth();
+    public boolean isAlive(Character character){
+        int health = character.getCurrentHealth();
         if(health < 1){
             return false;
         }
         return true;
     }
 
-    public void winner(Character winner){
-        if(winner.equals(pc)){
-            System.out.println( monster + " has been defeated.");
-            //System for looting here
+    public void takeDamage(Character attacker, Character defender, int damage){
+        if(damage > 0){
+            throw new IllegalArgumentException("Damage can't be positive");
+        }
+        defender.changeCurrentHealth(damage);
+        if(!isAlive(defender)){
+            wins(attacker);
+        }
+    }
+
+    public void wins(Character winner){
+        if( winner == pc){
+            System.out.println("You have defeated " + monster.getName());
+            int exp = monster.giveEXP();
+            pc.gainExp(exp);
+            getLoot(pc, monster);
+            victory = true;
         }
         else{
-            System.out.println("You've died.");
+            System.out.println("Your journey ends.");
+            victory = true;
+            //endGame();
         }
-        victory = true;
+    }
+
+    public void getLoot(PlayerCharacter pc, Monster monster){
+        int gold = monster.getGold();
+        pc.addGold(gold);
+    }
+
+    public int getRound(){
+        return round;
     }
 }
