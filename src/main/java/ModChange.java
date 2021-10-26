@@ -19,15 +19,15 @@ public class ModChange {
 
     public void changeMod(){
         if(mod.equals("Evs")){
-            character.changeCurrentEvsMod(change);
+            character.modifyCurrentEvsMod(change);
             return;
         }
         if(mod.equals("Atk")){
-            character.changeCurrentAtkMod(change);
+            character.modifyCurrentAtkMod(change);
             return;
         }
         if(mod.equals("Spd")){
-            character.changeCurrentSpd(change);
+            character.modifyCurrentSpd(change);
             return;
         }
         else{

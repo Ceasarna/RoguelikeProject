@@ -120,7 +120,7 @@ public class Combat {
         System.out.println(attacker.getName() + " attacks.");
         int toHit = diceRoller.roll1d100() + attacker.getAtkMod();
         if(toHit >= defender.getEvsMod()){
-            int damage = -1 * attacker.rollBaseDmg();
+            int damage = -1 * attacker.rollDmg();
             System.out.println("Hit! " + defender.getName() + " takes " + damage*-1 + " points of damage.");
             takeDamage(attacker, defender, damage);
         }
@@ -148,7 +148,7 @@ public class Combat {
         if(damage > 0){
             throw new IllegalArgumentException("Damage can't be positive");
         }
-        defender.changeCurrentHealth(damage);
+        defender.modifyCurrentHealth(damage);
         if(!isAlive(defender)){
             wins(attacker);
         }
@@ -158,7 +158,7 @@ public class Combat {
         if( winner == pc){
             System.out.println("You have defeated " + monster.getName());
             int exp = monster.giveEXP();
-            pc.gainExp(exp);
+            pc.addExp(exp);
             getLoot(pc, monster);
             victory = true;
         }

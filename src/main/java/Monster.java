@@ -12,23 +12,23 @@ public class Monster extends Character{
     private static final int MAGIC_SPELL = 4;
 
     // SpellBook samt inventory. Kommer inte ändras.
-    private final MonsterInventory inventory;
+    private final Inventory inventory;
 
     // Värde för vad nästa val av agerande för monstret ska vara
     private int queuedDecision = 0;
 
     // Attribut för vilken typ av monster som instansieras i konstruktorn
-    private final String monsterType;
+    protected String monsterType;
 
     // Konstruktor. Skapar Tomma utrymmen för inventory samt spellBook
     public Monster(int atkMod, int evsMod, int maxHealth, int gold, int baseDmgMin, int baseDmgMax, int spd, String name, int lvl, String monsterType){
         super(atkMod, evsMod, maxHealth, gold, baseDmgMin, baseDmgMax, spd, name, lvl);
         this.monsterType = monsterType;
-        this.inventory = new MonsterInventory(this);
+        this.inventory = new Inventory(this);
     }
 
     // Get-metod
-    public MonsterInventory getInventory(){ return this.inventory; }
+    public Inventory getInventory(){ return this.inventory; }
 
     //Get-metod
     public String getMonsterType(){

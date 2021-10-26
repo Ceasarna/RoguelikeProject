@@ -2,8 +2,8 @@ public class Goblin extends Monster{
 
     private static final int GOBLIN_EXP_DROP = 200;
 
-    public Goblin(int atkMod, int evsMod, int maxHealth, int gold, int baseDmgMin, int baseDmgMax, int spd, String name){
-        super(atkMod, evsMod, maxHealth, gold, baseDmgMin, baseDmgMax, spd, name);
+    public Goblin(int atkMod, int evsMod, int maxHealth, int gold, int baseDmgMin, int baseDmgMax, int spd, String name, int lvl, String monsterType){
+        super(atkMod, evsMod, maxHealth, gold, baseDmgMin, baseDmgMax, spd, name, lvl, monsterType);
         this.monsterType = "Goblin";
     }
     @Override

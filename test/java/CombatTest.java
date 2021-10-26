@@ -31,7 +31,7 @@ private Combat encounter;
     @Before
     public void setUp() {
         pc = new PlayerCharacter(50, 60, 50, 0, 2, 4, 50, "Hero");
-        monster = new Monster(50, 60, 60, 5, 5, 7, 40, "Monster");
+        monster = new Monster(50, 60, 60, 5, 5, 7, 40, "Boblin", 2, "Goblin");
         encounter = new Combat(pc, monster);
         diceRoller = mock(DiceRoller.class);
         pc.setDiceRoller(diceRoller);
@@ -67,7 +67,7 @@ private Combat encounter;
 
     @Test
     public void pcHealthZero(){
-        pc.changeCurrentHealth(-50);
+        pc.modifyCurrentHealth(-50);
         assertFalse(encounter.isAlive(pc));
     }
 
@@ -78,7 +78,7 @@ private Combat encounter;
 
     @Test
     public void monsterHealthZero(){
-        monster.changeCurrentHealth(-60);
+        monster.modifyCurrentHealth(-60);
         assertFalse(encounter.isAlive(monster));
     }
 
@@ -107,7 +107,7 @@ private Combat encounter;
         encounter.takeDamage(pc, monster, -60);
         assertTrue(encounter.victory);
         assertEquals(5, pc.getGold());
-        assertEquals(1100, pc.getCurrentExp());
+        assertEquals(1100, pc.getExp());
     }
 
     @Test

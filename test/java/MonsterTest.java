@@ -8,7 +8,7 @@ public class MonsterTest {
 
     @BeforeEach
     void setUp(){
-        actualGoblin = new Goblin(10,9,8,7,5,6,4,"GoblinOne");
+        actualGoblin = new Goblin(10,9,8,7,5,6,4,"GoblinOne", 1, "Goblin");
     }
     @Test
     void testMonsterAtkMod(){
@@ -55,7 +55,7 @@ public class MonsterTest {
 
     @Test
     void testEquipDmgSpellForMonster(){
-        DamageMagic expectedDmgMagic = new DamageMagic(5,"FireMagic",15,20);
+        DamageMagic expectedDmgMagic = new DamageMagic(5,"FireMagic","Fireblast", 15,20);
 
         actualGoblin.spellBook.equipDamageSpell(expectedDmgMagic);
 
