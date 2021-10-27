@@ -112,6 +112,9 @@ public class PlayerCharacterTest {
     }
 
     @Test
+    public void testSpellBook(){ assertNotNull(correctPlayer.getSpellBook()); }
+
+    @Test
     public void incorrectHealthThrowsException(){
         assertThrows(IllegalArgumentException.class, () -> new PlayerCharacter(50, 50, 0, 10, 1, 10, 5, "Hero"));
     }
