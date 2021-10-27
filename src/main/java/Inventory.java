@@ -17,7 +17,12 @@ public class Inventory {
 
     //Returnerar en omodifierbar lista av ryggsäckens innehåll
     public List<Equipment> getBackpack(){
-        return Collections.unmodifiableList(backpack);
+        return backpack;
+        //return Collections.unmodifiableList(backpack);
+    }
+
+    public Equipment getEquipment(int index){
+        return backpack.get(index);
     }
 
     //Lägger till ett nytt item i ryggsäcken

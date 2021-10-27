@@ -1,19 +1,13 @@
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+
 import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
-import java.util.Scanner;
+import java.util.NoSuchElementException;
 
 import static org.junit.Assert.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -27,6 +21,7 @@ private PlayerCharacter pc;
 private Monster monster;
 private DiceRoller diceRoller;
 private Combat encounter;
+private PlayerInput input;
 
     @Before
     public void setUp() {
@@ -34,9 +29,11 @@ private Combat encounter;
         monster = new Monster(50, 60, 60, 5, 5, 7, 40, "Boblin", 2, "Goblin");
         encounter = new Combat(pc, monster);
         diceRoller = mock(DiceRoller.class);
+        input = mock(PlayerInput.class);
         pc.setDiceRoller(diceRoller);
         monster.setDiceRoller(diceRoller);
         encounter.setDiceRoller(diceRoller);
+        encounter.setPlayerInput(input);
     }
 
     @AfterEach
@@ -63,7 +60,6 @@ private Combat encounter;
         assertArrayEquals(expected, initiative);
         verify(diceRoller, times(2)).roll1d100();
     }
-
 
     @Test
     public void pcHealthZero(){
@@ -107,7 +103,7 @@ private Combat encounter;
         encounter.takeDamage(pc, monster, -60);
         assertTrue(encounter.victory);
         assertEquals(5, pc.getGold());
-        assertEquals(1100, pc.getExp());
+        assertEquals(1200, pc.getExp());
     }
 
     @Test
@@ -159,15 +155,80 @@ private Combat encounter;
     }
 
     @Test
-    public void pcAttacksStart(){
+    public void pcAttackStart(){
         when(diceRoller.roll1d100()).thenReturn(50);
         when(diceRoller.rollWithinRange(2, 4)).thenReturn(4);
         String input = "1";
         InputStream in = new ByteArrayInputStream(input.getBytes());
         System.setIn(in);
-        encounter.characterTurn();
+        encounter.playerTurn();
         assertEquals(56, monster.getCurrentHealth());
     }
+
+    @Test
+    public void monsterAttackStart(){
+        when(diceRoller.roll1d100()).thenReturn(50);
+        when(diceRoller.rollWithinRange(5, 7)).thenReturn(6);
+        encounter.monsterTurn();
+        assertEquals(44, pc.getCurrentHealth());
+    }
+
+    @Test
+    public void pcUseManaPotion(){
+        Consumable e = new Consumable("Healing Potion", "Health", 10);
+        Consumable e2 = new Consumable("Mana Potion", "Mana", 25);
+        pc.modifyCurrentMana(-50);
+        pc.getInventory().getBackpack().add(e);
+        pc.getInventory().getBackpack().add(e2);
+        encounter.useItem(pc, 2);
+        assertEquals(75, pc.getMana());
+        assertEquals(1, pc.getInventory().getBackpack().size());
+
+    }
+
+    @Test
+    public void pcUseHealthPotion(){
+        Consumable e = new Consumable("Healing Potion", "Health", 10);
+        Consumable e2 = new Consumable("Mana Potion", "Mana", 25);
+        pc.modifyCurrentHealth(-20);
+        pc.getInventory().getBackpack().add(e);
+        pc.getInventory().getBackpack().add(e2);
+        encounter.useItem(pc, 1);
+        assertEquals(40, pc.getCurrentHealth());
+        assertEquals(1, pc.getInventory().getBackpack().size());
+    }
+
+    @Test
+    public void pcHasNoItem(){
+        String input = "3";
+        InputStream in = new ByteArrayInputStream(input.getBytes());
+        System.setIn(in);
+        Exception exception = assertThrows(NoSuchElementException.class, () -> {
+            encounter.turn(pc, monster, 3);});
+        String expected = "You have no items.";
+        String actual = exception.getMessage();
+        assertTrue(actual.contains(expected));
+    }
+
+    @Test
+    public void looting(){
+        Weapon e = new Weapon(5, 5, 7, "Sword");
+        monster.getInventory().getBackpack().add(e);
+        encounter.takeDamage(pc, monster, -70);
+        assertEquals(5, pc.getGold());
+        assertEquals(1, pc.getInventory().getBackpack().size());
+    }
+
+    @Test
+    public void noLoot(){
+        Monster monster2 = new Monster(50, 60, 60, 0, 5, 7, 40, "Roblin", 2, "Goblin");
+        Combat encounter2 = new Combat(pc, monster2);
+        encounter2.takeDamage(pc, monster2, -70);
+        assertEquals(0, pc.getGold());
+        assertEquals(0, pc.getInventory().getBackpack().size());
+    }
+
+
 }
 
 
