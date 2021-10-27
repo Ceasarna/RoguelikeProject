@@ -21,6 +21,7 @@ public class Inventory {
         //return Collections.unmodifiableList(backpack);
     }
 
+    //Returnerar utrustningen från ryggsäcken vid given index
     public Equipment getEquipment(int index){
         return backpack.get(index);
     }
