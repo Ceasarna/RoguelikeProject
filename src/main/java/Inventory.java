@@ -1,7 +1,6 @@
 //Klassen som hanterar ryggsäckar och agerar som förälder till spelarens inventory
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class Inventory {
@@ -17,7 +16,18 @@ public class Inventory {
 
     //Returnerar en omodifierbar lista av ryggsäckens innehåll
     public List<Equipment> getBackpack(){
-        return Collections.unmodifiableList(backpack);
+        return backpack;
+        //return Collections.unmodifiableList(backpack);
+    }
+
+    //Returnerar utrustningen från ryggsäcken vid given index
+    public Equipment getEquipment(int index){
+        return backpack.get(index);
+    }
+
+    //Returnerar ägaren
+    public Character getOwner(){
+        return owner;
     }
 
     //Lägger till ett nytt item i ryggsäcken

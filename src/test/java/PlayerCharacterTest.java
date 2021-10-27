@@ -440,4 +440,31 @@ public class PlayerCharacterTest {
         assertEquals(expectedHealth, correctPlayer.getMaxHealth());
     }
 
+    @Test
+    public void rollBaseDmg(){
+        int expectedMinDmg = 1;
+        int expectedMaxDmg = 5;
+        int actualDmg = correctPlayer.rollDmg();
+        assertTrue(actualDmg >= expectedMinDmg && actualDmg <= expectedMaxDmg);
+    }
+
+    @Test
+    public void rollDmgWithWeapon(){
+        Weapon weapon = new Weapon(10, 20, 50, "Hammer of Purity");
+        correctPlayer.getInventory().equipWeapon(weapon);
+        int expectedMinDmg = 20;
+        int expectedMaxDmg = 50;
+        int actualDmg = correctPlayer.rollDmg();
+        assertTrue(actualDmg >= expectedMinDmg && actualDmg <= expectedMaxDmg);
+    }
+
+    @Test
+    public void rollInitiative(){
+        int expectedMinInitiative = 11;
+        int expectedMaxInitiative = 110;
+        correctPlayer.rollForInitiative();
+        int actualInitiative = correctPlayer.getInitiative();
+        assertTrue(actualInitiative >= expectedMinInitiative && actualInitiative <= expectedMaxInitiative);
+    }
+
 }
