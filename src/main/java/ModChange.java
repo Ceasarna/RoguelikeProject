@@ -17,6 +17,12 @@ public class ModChange {
         return roundEnd;
     }
 
+    public Character getCharacter(){ return character; }
+
+    public String getMod(){ return mod; }
+
+    public int getChange(){ return change; }
+
     public void changeMod(){
         if(mod.equals("Evs")){
             character.modifyCurrentEvsMod(change);
@@ -35,4 +41,18 @@ public class ModChange {
         }
     }
 
+    public void changeMod(String mod, int change) {
+        if (mod.equals("Evs")) {
+            character.modifyCurrentEvsMod(change);
+            return;
+        }
+        if (mod.equals("Atk")) {
+            character.modifyCurrentAtkMod(change);
+            return;
+        }
+        if (mod.equals("Spd")) {
+            character.modifyCurrentSpd(change);
+            return;
+        }
+    }
 }

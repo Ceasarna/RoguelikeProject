@@ -39,7 +39,7 @@ public class HealingMagic extends Magic{
     }
 
     // Get-metod
-    public double getMaxDmg() {
+    public double getMaxHeal() {
         return maxHeal;
     }
 

@@ -158,9 +158,7 @@ private PlayerInput input;
     public void pcAttackStart(){
         when(diceRoller.roll1d100()).thenReturn(50);
         when(diceRoller.rollWithinRange(2, 4)).thenReturn(4);
-        String input = "1";
-        InputStream in = new ByteArrayInputStream(input.getBytes());
-        System.setIn(in);
+
         encounter.playerTurn();
         assertEquals(56, monster.getCurrentHealth());
     }
@@ -227,6 +225,7 @@ private PlayerInput input;
         assertEquals(0, pc.getGold());
         assertEquals(0, pc.getInventory().getBackpack().size());
     }
+
 
 
 }
