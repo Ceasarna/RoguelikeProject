@@ -20,6 +20,11 @@ public class Inventory {
         return Collections.unmodifiableList(backpack);
     }
 
+    //Returnerar ägaren
+    public Character getOwner(){
+        return owner;
+    }
+
     //Lägger till ett nytt item i ryggsäcken
     public void pickupItem(Equipment e){
         backpack.add(e);
