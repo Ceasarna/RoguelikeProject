@@ -1,7 +1,6 @@
 //Klassen som hanterar ryggsäckar och agerar som förälder till spelarens inventory
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class Inventory {
