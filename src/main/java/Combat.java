@@ -2,14 +2,15 @@ import java.util.*;
 
 public class Combat {
 
-    PlayerCharacter pc;
-    Monster monster;
+    final PlayerCharacter pc;
+    final Monster monster;
     int round = 0;
-    Character[] initiative;
+    final Character[] initiative;
     boolean victory = false;
+    boolean defeat;
     DiceRoller diceRoller = new DiceRoller();
     PlayerInput playerInput = new PlayerInput();
-    List <ModChange> modChanges = new ArrayList<>();
+    final List <ModChange> modChanges = new ArrayList<>();
 
 
     public Combat(PlayerCharacter pc, Monster monster) {
@@ -65,11 +66,9 @@ public class Combat {
     //Sedan återgår den till antingen monsterTurn eller combatTurn beroende på spelarens initiativ.
     public void playerTurn(){
         tempModChangeCheck(pc);
-        int command = 0;
         System.out.println("What do you want to do? Type the number of the action.");
         System.out.println("1. Attack \n2. Dodge \n3. Use Item \n4. Magic");
-        PlayerInput input = new PlayerInput();
-        command = input.getInput();
+        int command = playerInput.getInput();
         if (command < 1 || command > 4) {
             throw new IllegalArgumentException("That is not a valid action. Please try again.");
         }
@@ -115,9 +114,7 @@ public class Combat {
                 System.out.println((i + 1)+ ". " + pc.getInventory().getEquipment(i).getName());
                 i++;
             }
-            int choice = 0;
-            PlayerInput input = new PlayerInput();
-            choice = input.getInput();
+            int choice = playerInput.getInput();
             if (choice < 1 || choice > pc.getInventory().getBackpack().size()) {
                 throw new NoSuchElementException("Please chose a valid item.");
             }
@@ -125,21 +122,26 @@ public class Combat {
         }
         if(command == 4){
             if(user.equals(pc)){
-                if (pc.getSpellBook().getSpellBook().size() < 1) {
+                if (pc.getSpellBook().getSpellBook().size() < 1 && pc.getSpellBook().getUtilitySlot() == null &&
+                pc.getSpellBook().getHealingSlot() == null && pc.getSpellBook().getDamageSlot() == null) {
                     throw new NoSuchElementException("You don't know any spells.");
                 }
-                System.out.println("What Spell would you like to use? Write the number of the spell.");
-                System.out.print("1. " + pc.getSpellBook().getDamageSlot().getSpellName() + "\n2. " +
-                        pc.getSpellBook().getHealingSlot().getSpellName() + "\n3. " +
-                        pc.getSpellBook().getUtilitySlot().getSpellName());
-                int choice = 0;
-                PlayerInput input = new PlayerInput();
-                choice = input.getInput();
-
+                System.out.println("What spellslot would you like to use? Write the number of the spellslot.");
+                System.out.println("1. Damage\n2. Healing\n3. Utility");
+                int choice = playerInput.getInput();
                 if (choice < 1 || choice > 3) {
-                    throw new NoSuchElementException("Please chose a valid item.");
+                    throw new NoSuchElementException("Please chose a valid spellslot.");
                 }
                 useMagic(pc, monster, choice);
+            }
+            else{
+                int choice;
+                Magic spell = monster.useMagic();
+                if(spell instanceof DamageMagic){ choice = 1; }
+                else if(spell instanceof HealingMagic){ choice = 2; }
+                else if(spell instanceof UtilityMagic){ choice = 3; }
+                else{ throw new IllegalArgumentException("How did you fuck this up?");}
+                useMagic(monster, pc, choice);
             }
         }
     }
@@ -192,11 +194,11 @@ public class Combat {
             Consumable c = (Consumable) pc.getInventory().getEquipment(choice - 1);
             c.useItem(pc);
         }
-        else{
-            throw new IllegalArgumentException("This item cannot be used at this time.");
-        }
+        else{ throw new IllegalArgumentException("This item cannot be used at this time.");}
     }
 
+    //Funktionen för att utföra magi. Kallar på de olike Magic-klassernas funktioner för att få tillbaka spells.
+    //Sedan utför skada, helning eller modchanges beroende på vad för sorts spell det är.
     public void useMagic(Character user, Character target, int choice){
         if(choice == 1){
             DamageMagic dSpell = user.getSpellBook().useDamageSpell();
@@ -216,7 +218,21 @@ public class Combat {
             HealingMagic hSpell = user.getSpellBook().useHealingSpell();
             System.out.println(user.getName() + " casts " + hSpell.getSpellName());
             int healing = diceRoller.rollWithinRange((int)hSpell.getMinHeal(), (int)hSpell.getMaxHeal());
-
+            user.modifyCurrentHealth(healing);
+            user.modifyCurrentMana(hSpell.getSpellCost() *-1);
+        }
+        if(choice == 3){
+            UtilityMagic uSpell = user.getSpellBook().useUtilitySpell();
+            System.out.println(user.getName() + " casts " + uSpell.getSpellName());
+            int utilityChange = (int)uSpell.getUtilityValue();
+            String utilityMod = uSpell.getUtilityType();
+            if(utilityChange > 0){
+                target = user;
+            }
+            ModChange modChange = new ModChange(round, 5, utilityChange, target, utilityMod);
+            modChanges.add(modChange);
+            modChange.changeMod();
+            user.modifyCurrentMana(uSpell.getSpellCost() *-1);
         }
     }
 
@@ -250,10 +266,7 @@ public class Combat {
     //Kontrollerar att karaktärens hp är mer än 0.
     public boolean isAlive(Character character){
         int health = character.getCurrentHealth();
-        if(health < 1){
-            return false;
-        }
-        return true;
+        return health >= 1;
     }
 
     //Hanterar efter-strids situationen, där om spelaren har vunnit så får den loot och exp.
@@ -268,7 +281,6 @@ public class Combat {
         }
         else{
             System.out.println("Your journey ends.");
-            victory = true;
             endGame();
         }
     }
@@ -301,6 +313,7 @@ public class Combat {
     //Om spelet vore färdigt/större så skulle den här metoden leda till att spelaren fick återgå till menyn,
     //samt att karaktären och progressen raderades.
     public void endGame(){
+        defeat = true;
     }
 
 }

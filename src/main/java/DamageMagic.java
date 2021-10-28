@@ -22,7 +22,7 @@ public class DamageMagic extends Magic{
             }
         }
         if(this.damageType.equals("")){
-            throw new IllegalArgumentException("SpellName must either be Light or Dark");
+            throw new IllegalArgumentException("Spelltype must either be Light or Dark");
         }
 
         this.minDmg = minDmg;

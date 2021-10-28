@@ -1,9 +1,9 @@
 public class ModChange {
-    int round;
-    int roundEnd;
-    int change;
-    Character character;
-    String mod;
+    final int round;
+    final int roundEnd;
+    final int change;
+    final Character character;
+    final String mod;
 
     public ModChange(int round, int duration, int change, Character character, String mod){
         this.round = round;
@@ -26,15 +26,12 @@ public class ModChange {
     public void changeMod(){
         if(mod.equals("Evs")){
             character.modifyCurrentEvsMod(change);
-            return;
         }
-        if(mod.equals("Atk")){
+        else if(mod.equals("Atk")){
             character.modifyCurrentAtkMod(change);
-            return;
         }
-        if(mod.equals("Spd")){
+        else if(mod.equals("Spd")){
             character.modifyCurrentSpd(change);
-            return;
         }
         else{
             throw new IllegalArgumentException("That is not a real mod");
@@ -44,15 +41,13 @@ public class ModChange {
     public void changeMod(String mod, int change) {
         if (mod.equals("Evs")) {
             character.modifyCurrentEvsMod(change);
-            return;
         }
-        if (mod.equals("Atk")) {
+        else if (mod.equals("Atk")) {
             character.modifyCurrentAtkMod(change);
             return;
         }
-        if (mod.equals("Spd")) {
+        else if (mod.equals("Spd")) {
             character.modifyCurrentSpd(change);
-            return;
         }
     }
 }

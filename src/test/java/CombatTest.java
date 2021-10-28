@@ -1,12 +1,9 @@
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.util.NoSuchElementException;
 
 import static org.junit.Assert.*;
@@ -21,7 +18,6 @@ private PlayerCharacter pc;
 private Monster monster;
 private DiceRoller diceRoller;
 private Combat encounter;
-private PlayerInput input;
 
     @Before
     public void setUp() {
@@ -29,15 +25,11 @@ private PlayerInput input;
         monster = new Monster(50, 60, 60, 5, 5, 7, 40, "Boblin", 2, "Goblin");
         encounter = new Combat(pc, monster);
         diceRoller = mock(DiceRoller.class);
-        input = mock(PlayerInput.class);
+        PlayerInput input = mock(PlayerInput.class);
         pc.setDiceRoller(diceRoller);
         monster.setDiceRoller(diceRoller);
         encounter.setDiceRoller(diceRoller);
         encounter.setPlayerInput(input);
-    }
-
-    @AfterEach
-    public void tearDown() {
     }
 
     @Test
@@ -62,6 +54,41 @@ private PlayerInput input;
     }
 
     @Test
+    public void createInitiativeSameInitiativePcSpd() {
+        when(diceRoller.roll1d100()).thenReturn(50, 60);
+        Character[] expected = new Character[2];
+        expected[0] = pc;
+        expected[1] = monster;
+        Character[] initiative = encounter.createInitiative();
+        assertArrayEquals(expected, initiative);
+        verify(diceRoller, times(2)).roll1d100();
+    }
+
+    @Test
+    public void createInitiativeSameInitiativeMonsterSpd() {
+        monster.modifyCurrentSpd(20);
+        when(diceRoller.roll1d100()).thenReturn(50, 40);
+        Character[] expected = new Character[2];
+        expected[0] = monster;
+        expected[1] = pc;
+        Character[] initiative = encounter.createInitiative();
+        assertArrayEquals(expected, initiative);
+        verify(diceRoller, times(2)).roll1d100();
+    }
+
+    @Test
+    public void createInitiativeSameInitiativeSameSpd() {
+        monster.modifyCurrentSpd(10);
+        when(diceRoller.roll1d100()).thenReturn(50);
+        Character[] expected = new Character[2];
+        expected[0] = pc;
+        expected[1] = monster;
+        Character[] initiative = encounter.createInitiative();
+        assertArrayEquals(expected, initiative);
+        verify(diceRoller, times(2)).roll1d100();
+    }
+
+    @Test
     public void pcHealthZero(){
         pc.modifyCurrentHealth(-50);
         assertFalse(encounter.isAlive(pc));
@@ -69,7 +96,7 @@ private PlayerInput input;
 
     @Test
     public void pcHealthMax(){
-        assertTrue(encounter.isAlive(pc));
+        assertEquals(50, pc.getCurrentHealth());
     }
 
     @Test
@@ -80,7 +107,7 @@ private PlayerInput input;
 
     @Test
     public void monsterHealthMax(){
-        assertTrue(encounter.isAlive(monster));
+        assertEquals(60, monster.getCurrentHealth());
     }
 
     @Test
@@ -91,8 +118,21 @@ private PlayerInput input;
 
     @Test
     public void pcTakePositiveDamage(){
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-        encounter.takeDamage(monster, pc, 5);});
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> encounter.takeDamage(monster, pc, 5));
+        String expected = "Damage can't be positive";
+        String actual = exception.getMessage();
+        assertTrue(actual.contains(expected));
+    }
+
+    @Test
+    public void monsterTakeDamage(){
+        encounter.takeDamage(pc, monster, -5);
+        assertEquals(55, monster.getCurrentHealth());
+    }
+
+    @Test
+    public void monsterTakePositiveDamage(){
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> encounter.takeDamage(pc, monster, 5));
         String expected = "Damage can't be positive";
         String actual = exception.getMessage();
         assertTrue(actual.contains(expected));
@@ -109,7 +149,8 @@ private PlayerInput input;
     @Test
     public void monsterWins(){
         encounter.takeDamage(monster, pc, -55);
-        assertTrue(encounter.victory);
+        assertTrue(encounter.defeat);
+        assertFalse(encounter.victory);
     }
 
     @Test
@@ -182,13 +223,190 @@ private PlayerInput input;
     @Test
     public void pcHasNoItem(){
         when(encounter.playerInput.getInput()).thenReturn(1);
-        Exception exception = assertThrows(NoSuchElementException.class, () -> {
-            encounter.turn(pc, monster, 3);});
+        Exception exception = assertThrows(NoSuchElementException.class, () -> encounter.turn(pc, monster, 3));
         String expected = "You have no items.";
         String actual = exception.getMessage();
         assertTrue(actual.contains(expected));
     }
 
+    @Test
+    public void pcUseWrongItem(){
+        when(encounter.playerInput.getInput()).thenReturn(1);
+        Weapon sword = new Weapon(10,5, 7, "Sword");
+        pc.getInventory().getBackpack().add(sword);
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> encounter.useItem(pc, 1));
+        String expected = "This item cannot be used at this time.";
+        String actual = exception.getMessage();
+        assertTrue(actual.contains(expected));
+    }
+
+    @Test
+    public void pcChoseItem(){
+        Consumable c = new Consumable("Healing potion", "Health", 10);
+        pc.getInventory().getBackpack().add(c);
+        encounter.takeDamage(monster, pc, -15);
+        when(encounter.playerInput.getInput()).thenReturn(1);
+        encounter.turn(pc, monster, 3);
+        assertEquals(45, pc.getCurrentHealth());
+    }
+
+    @Test
+    public void pcChoseNoItem(){
+        when(encounter.playerInput.getInput()).thenReturn(2);
+        Consumable c = new Consumable("Healing potion", "Health", 10);
+        pc.getInventory().getBackpack().add(c);
+        encounter.takeDamage(monster, pc, -15);
+        Exception exception = assertThrows(NoSuchElementException.class, () -> encounter.turn(pc, monster, 3));
+        String expected = "Please chose a valid item.";
+        String actual = exception.getMessage();
+        assertTrue(actual.contains(expected));
+    }
+
+    @Test
+    public void pcHasNoSpells(){
+        Exception exception = assertThrows(NoSuchElementException.class, () -> encounter.turn(pc, monster, 4));
+        String expected = "You don't know any spells.";
+        String actual = exception.getMessage();
+        assertTrue(actual.contains(expected));
+    }
+
+    @Test
+    public void pcHasSpells(){
+        when(encounter.playerInput.getInput()).thenReturn(1);
+        when(encounter.diceRoller.rollWithinRange(10, 20)).thenReturn(10);
+        when(encounter.diceRoller.roll1d100()).thenReturn(50);
+        DamageMagic dSpell = new DamageMagic(10, "Light", "Fireball", 10, 20);
+        pc.spellBook.pickUpSpell(dSpell);
+        pc.spellBook.equipDamageSpell(dSpell);
+        encounter.turn(pc, monster, 4);
+        assertEquals(50, monster.getCurrentHealth());
+        assertEquals(90, pc.getMana());
+    }
+
+    @Test
+    public void pcPicksWrongSpellslot(){
+        when(encounter.playerInput.getInput()).thenReturn(4);
+        DamageMagic dSpell = new DamageMagic(10, "Light", "Fireball", 10, 20);
+        pc.spellBook.pickUpSpell(dSpell);
+        pc.spellBook.equipDamageSpell(dSpell);
+        Exception exception = assertThrows(NoSuchElementException.class, ()-> encounter.turn(pc, monster, 4));
+        String expected = "Please chose a valid spellslot.";
+        String actual = exception.getMessage();
+        assertTrue(actual.contains(expected));
+    }
+
+    @Test
+    public void pcUseDamageMagic(){
+        when(encounter.diceRoller.rollWithinRange(10, 20)).thenReturn(10);
+        when(encounter.diceRoller.roll1d100()).thenReturn(50);
+        DamageMagic dSpell = new DamageMagic(10, "Light", "Fireball", 10, 20);
+        pc.spellBook.pickUpSpell(dSpell);
+        pc.spellBook.equipDamageSpell(dSpell);
+        encounter.useMagic(pc, monster, 1);
+        assertEquals(50, monster.getCurrentHealth());
+        assertEquals(90, pc.getMana());
+    }
+
+    @Test
+    public void pcMissDamageMagic(){
+        when(encounter.diceRoller.roll1d100()).thenReturn(1);
+        DamageMagic dSpell = new DamageMagic(10, "Light", "Fireball", 10, 20);
+        pc.spellBook.pickUpSpell(dSpell);
+        pc.spellBook.equipDamageSpell(dSpell);
+        encounter.useMagic(pc, monster, 1);
+        assertEquals(60, monster.getCurrentHealth());
+        assertEquals(90, pc.getMana());
+    }
+
+    @Test
+    public void monsterUseDamageMagic(){
+        when(encounter.diceRoller.rollWithinRange(20, 40)).thenReturn(20);
+        when(encounter.diceRoller.roll1d100()).thenReturn(50);
+        DamageMagic dSpell = new DamageMagic(10, "Light", "Fireball", 10, 20);
+        monster.spellBook.pickUpSpell(dSpell);
+        monster.spellBook.equipDamageSpell(dSpell);
+        encounter.useMagic(monster, pc, 1);
+        assertEquals(30, pc.getCurrentHealth());
+        assertEquals(90, monster.getMana());
+    }
+    @Test
+    public void monsterMissDamageMagic(){
+        when(encounter.diceRoller.roll1d100()).thenReturn(1);
+        DamageMagic dSpell = new DamageMagic(10, "Light", "Fireball", 10, 20);
+        monster.spellBook.pickUpSpell(dSpell);
+        monster.spellBook.equipDamageSpell(dSpell);
+        encounter.useMagic(monster, pc, 1);
+        assertEquals(50, pc.getCurrentHealth());
+        assertEquals(90, monster.getMana());
+    }
+
+    @Test
+    public void pcUseHealingMagic(){
+        when(encounter.diceRoller.rollWithinRange(10, 20)).thenReturn(10);
+        HealingMagic hSpell = new HealingMagic(10, "Healing word", 10, 20);
+        pc.spellBook.pickUpSpell(hSpell);
+        pc.spellBook.equipHealingSpell(hSpell);
+        encounter.takeDamage(monster, pc, -20);
+        encounter.useMagic(pc, monster, 2);
+        assertEquals(40, pc.getCurrentHealth());
+        assertEquals(90, pc.getMana());
+    }
+
+    @Test
+    public void monsterUseHealingMagic(){
+        when(encounter.diceRoller.rollWithinRange(10, 20)).thenReturn(10);
+        HealingMagic hSpell = new HealingMagic(10, "Healing word", 5, 10);
+        monster.spellBook.pickUpSpell(hSpell);
+        monster.spellBook.equipHealingSpell(hSpell);
+        encounter.takeDamage(pc, monster, -20);
+        encounter.useMagic(monster, pc, 2);
+        assertEquals(50, monster.getCurrentHealth());
+        assertEquals(90, monster.getMana());
+    }
+
+    @Test
+    public void pcUseUtilityMagic(){
+        UtilityMagic uSpell = new UtilityMagic(10, "Speedy", 5, "Spd");
+        pc.spellBook.pickUpSpell(uSpell);
+        pc.spellBook.equipUtilitySpell(uSpell);
+        encounter.useMagic(pc, monster, 3);
+        assertEquals(55, pc.getCurrentSpd());
+        assertEquals(90, pc.getMana());
+        assertEquals(1, encounter.modChanges.size());
+    }
+
+    @Test
+    public void monsterUseUtilityMagic(){
+        UtilityMagic uSpell = new UtilityMagic(10, "Speedy", 5, "Spd");
+        monster.spellBook.pickUpSpell(uSpell);
+        monster.spellBook.equipUtilitySpell(uSpell);
+        encounter.useMagic(monster, pc, 3);
+        assertEquals(50, monster.getCurrentSpd());
+        assertEquals(90, monster.getMana());
+        assertEquals(1, encounter.modChanges.size());
+    }
+
+    @Test
+    public void pcUseNegativeUtilityMagic(){
+        UtilityMagic uSpell = new UtilityMagic(10, "No-Speedy", -5, "Spd");
+        pc.spellBook.pickUpSpell(uSpell);
+        pc.spellBook.equipUtilitySpell(uSpell);
+        encounter.useMagic(pc, monster, 3);
+        assertEquals(35, monster.getCurrentSpd());
+        assertEquals(90, pc.getMana());
+        assertEquals(1, encounter.modChanges.size());
+    }
+
+    @Test
+    public void monsterUseNegativeUtilityMagic(){
+        UtilityMagic uSpell = new UtilityMagic(10, "No-Speedy", -5, "Spd");
+        monster.spellBook.pickUpSpell(uSpell);
+        monster.spellBook.equipUtilitySpell(uSpell);
+        encounter.useMagic(monster, pc, 3);
+        assertEquals(40, pc.getCurrentSpd());
+        assertEquals(90, monster.getMana());
+        assertEquals(1, encounter.modChanges.size());
+    }
     @Test
     public void looting(){
         Weapon e = new Weapon(5, 5, 7, "Sword");

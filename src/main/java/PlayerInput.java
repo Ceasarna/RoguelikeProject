@@ -1,5 +1,3 @@
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.util.Scanner;
 
 public class PlayerInput {
@@ -16,5 +14,4 @@ public class PlayerInput {
         input = sc.nextInt();
         return input;
     }
-
 }
