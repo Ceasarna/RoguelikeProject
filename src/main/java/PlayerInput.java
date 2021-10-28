@@ -1,18 +1,20 @@
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.Scanner;
 
 public class PlayerInput {
 
     int input;
+    Scanner sc;
 
     public void playerInput(){
-    }
-
-    public void setInput(){
-        Scanner sc = new Scanner(System.in);
-        input = sc.nextInt();
+        this.input = getInput();
+        this.sc = new Scanner(System.in);
     }
 
     public int getInput(){
+        input = sc.nextInt();
         return input;
     }
+
 }
