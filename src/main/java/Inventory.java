@@ -6,7 +6,7 @@ import java.util.List;
 public class Inventory {
 
     //Både ägaren och ryggsäcken behöver nås av PlayerInventory, därav protected
-    protected Character owner;
+    protected final Character owner;
     protected final ArrayList<Equipment> backpack = new ArrayList<>();
 
     //Konstruktorn
