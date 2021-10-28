@@ -1,6 +1,7 @@
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 
@@ -18,6 +19,7 @@ private PlayerCharacter pc;
 private Monster monster;
 private DiceRoller diceRoller;
 private Combat encounter;
+private PlayerInput input;
 
     @Before
     public void setUp() {
@@ -25,11 +27,12 @@ private Combat encounter;
         monster = new Monster(50, 60, 60, 5, 5, 7, 40, "Boblin", 2, "Goblin");
         encounter = new Combat(pc, monster);
         diceRoller = mock(DiceRoller.class);
-        PlayerInput input = mock(PlayerInput.class);
+        input = mock(PlayerInput.class);
         pc.setDiceRoller(diceRoller);
         monster.setDiceRoller(diceRoller);
         encounter.setDiceRoller(diceRoller);
         encounter.setPlayerInput(input);
+
     }
 
     @Test
@@ -151,6 +154,16 @@ private Combat encounter;
         encounter.takeDamage(monster, pc, -55);
         assertTrue(encounter.defeat);
         assertFalse(encounter.victory);
+    }
+
+    @Test
+    public void pcInvalidChoice(){
+        when(encounter.playerInput.getInput()).thenReturn(5);
+        Exception exception = assertThrows(IllegalArgumentException.class, () ->{
+            encounter.playerTurn();});
+        String expected = "That is not a valid action. Please try again.";
+        String actual = exception.getMessage();
+        assertTrue(actual.contains(expected));
     }
 
     @Test
@@ -296,6 +309,46 @@ private Combat encounter;
     }
 
     @Test
+    public void monsterHasDSpell(){
+        when(encounter.diceRoller.roll1d100()).thenReturn(100);
+        when(encounter.diceRoller.rollWithinRange(20, 20)).thenReturn(20);
+        Monster spyMonster = Mockito.spy(monster);
+        DamageMagic dSpell = new DamageMagic(10, "Dark", "Hurty", 10, 10);
+        spyMonster.spellBook.equipDamageSpell(dSpell);
+        monster.setQueuedDecision(1);
+        when(spyMonster.decisionMaker()).thenReturn(4);
+        when(spyMonster.useMagic()).thenReturn(dSpell);
+        encounter.turn(spyMonster, pc, 4);
+        assertEquals(30, pc.getCurrentHealth());
+    }
+
+    @Test
+    public void monsterHasHSpell(){
+        encounter.takeDamage(pc, monster, -40);
+        when(encounter.diceRoller.rollWithinRange(20, 20)).thenReturn(20);
+        Monster spyMonster = Mockito.spy(monster);
+        HealingMagic hSpell = new HealingMagic(10, "Healy", 10, 10);
+        spyMonster.spellBook.equipHealingSpell(hSpell);
+        monster.setQueuedDecision(2);
+        when(spyMonster.decisionMaker()).thenReturn(4);
+        when(spyMonster.useMagic()).thenReturn(hSpell);
+        encounter.turn(spyMonster, pc, 4);
+        assertEquals(40, monster.getCurrentHealth());
+    }
+
+    @Test
+    public void monsterHasUSpell(){
+        Monster spyMonster = Mockito.spy(monster);
+        UtilityMagic uSpell = new UtilityMagic(10, "Matrix", 10, "Evs");
+        spyMonster.spellBook.equipUtilitySpell(uSpell);
+        monster.setQueuedDecision(3);
+        when(spyMonster.decisionMaker()).thenReturn(4);
+        when(spyMonster.useMagic()).thenReturn(uSpell);
+        encounter.turn(spyMonster, pc, 4);
+        assertEquals(80, monster.getCurrentEvsMod());
+    }
+
+    @Test
     public void pcUseDamageMagic(){
         when(encounter.diceRoller.rollWithinRange(10, 20)).thenReturn(10);
         when(encounter.diceRoller.roll1d100()).thenReturn(50);
@@ -425,7 +478,42 @@ private Combat encounter;
         assertEquals(0, pc.getInventory().getBackpack().size());
     }
 
+    @Test
+    public void combatPcWins(){
+        PlayerCharacter pc2 = new PlayerCharacter(50, 60, 20, 0, 10, 12, 50, "Hero2");
+        Monster monster3 = new Monster(1, 50, 30, 10, 4, 6, 30, "Toblin", 1, "Goblin");
+        Combat encounter3 = new Combat(pc2, monster3);
+        encounter3.setDiceRoller(diceRoller);
+        encounter3.setPlayerInput(input);
+        pc2.setDiceRoller(diceRoller);
+        monster3.setDiceRoller(diceRoller);
+        when(encounter3.diceRoller.roll1d100()).thenReturn(50);
+        when(encounter3.playerInput.getInput()).thenReturn(4, 3, 1);
+        when(encounter3.diceRoller.rollWithinRange(10, 12)).thenReturn(10);
+        UtilityMagic uSpell = new UtilityMagic(10, "Boost", 10, "Evs");
+        pc2.spellBook.pickUpSpell(uSpell);
+        pc2.spellBook.equipUtilitySpell(uSpell);
+        encounter3.createInitiative();
+        encounter3.startCombat();
+        assertTrue(encounter3.victory);
+    }
 
+    @Test
+    public void combatPcLose(){
+        PlayerCharacter pc3 = new PlayerCharacter(1, 50, 20, 0, 4, 6, 30, "Hero3");
+        Monster monster4 = new Monster(50, 60, 20, 10, 10, 12, 50, "Foblin", 1, "Goblin");
+        Combat encounter4 = new Combat(pc3, monster4);
+        encounter4.setDiceRoller(diceRoller);
+        encounter4.setPlayerInput(input);
+        pc3.setDiceRoller(diceRoller);
+        monster4.setDiceRoller(diceRoller);
+        when(encounter4.diceRoller.roll1d100()).thenReturn(50);
+        when(encounter4.playerInput.getInput()).thenReturn(1);
+        when(encounter4.diceRoller.rollWithinRange(10, 12)).thenReturn(10);
+        encounter4.createInitiative();
+        encounter4.startCombat();
+        assertTrue(encounter4.defeat);
+    }
 }
 
 

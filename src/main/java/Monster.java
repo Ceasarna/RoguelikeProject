@@ -35,6 +35,11 @@ public class Monster extends Character{
         return this.monsterType;
     }
 
+    //Set-metod för testing
+    public void setQueuedDecision(int choice){
+        queuedDecision = choice;
+    }
+
     // Lägger till pengar till monstret
     public void addGold(int newGold){
         if(newGold < 0 ){

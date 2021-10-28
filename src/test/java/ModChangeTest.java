@@ -3,7 +3,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 
-class ModChangeTest {
+public class ModChangeTest {
 
     private PlayerCharacter pc;
     private Monster monster;
@@ -34,5 +34,73 @@ class ModChangeTest {
 
     @Test
     public void getModTest(){ assertEquals("Atk", mcap.getMod());}
+
+    @Test
+    public void getChangeTest(){assertEquals(10, mcap.getChange());}
+
+    @Test
+    public void falseChangeMod(){
+        ModChange bad = new ModChange(1, 3, 10, pc, "Fire");
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            bad.changeMod();
+        });
+        String expected = "That is not a real mod";
+        String actual = exception.getMessage();
+        assertTrue(actual.contains(expected));
+    }
+
+    @Test
+    public void changeAtkUp(){
+        mcap.changeMod();
+        assertEquals(60, pc.getCurrentAtkMod());
+    }
+
+    @Test
+    public void changeAtkDown(){
+        mcan.changeMod();
+        assertEquals(40, pc.getCurrentAtkMod());
+    }
+
+    @Test
+    public void changeEvsUp(){
+        mcep.changeMod();
+        assertEquals(60, pc.getCurrentEvsMod());
+    }
+
+    @Test
+    public void changeEvsDown(){
+        mcen.changeMod();
+        assertEquals(40, pc.getCurrentEvsMod());
+    }
+
+    @Test
+    public void changeSpdUp(){
+        mcsp.changeMod();
+        assertEquals(60, pc.getCurrentSpd());
+    }
+
+    @Test
+    public void changeSpdDown(){
+        mcsn.changeMod();
+        assertEquals(40, pc.getCurrentSpd());
+    }
+
+    @Test
+    public void changeModAltAtk(){
+        mcan.changeMod("Atk", 10);
+        assertEquals(60, pc.getCurrentAtkMod());
+    }
+
+    @Test
+    public void changeModAltEvs(){
+        mcen.changeMod("Evs", 10);
+        assertEquals(60, pc.getCurrentEvsMod());
+    }
+
+    @Test
+    public void changeModAltSpd(){
+        mcsn.changeMod("Spd", 10);
+        assertEquals(60, pc.getCurrentSpd());
+    }
 
 }

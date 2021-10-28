@@ -50,7 +50,7 @@ public class Combat {
     //Den här funktionen håller koll på hur många rundor som har gått,
     //samt fortsätter striden så länge som ingen har vunnit.
     public void combatRound(){
-        while (!victory) {
+        while(!victory && !defeat){
             round++;
             if(initiative[0].equals(pc)) {
                 playerTurn();
@@ -73,7 +73,7 @@ public class Combat {
             throw new IllegalArgumentException("That is not a valid action. Please try again.");
         }
         turn(pc, monster, command);
-        if(initiative[0].equals(pc)){
+        if(initiative[0].equals(pc) && !victory){
             monsterTurn();
         }
         else{
@@ -87,7 +87,7 @@ public class Combat {
         tempModChangeCheck(monster);
         int command = monster.decisionMaker();
         turn(monster, pc, command);
-        if(initiative[0].equals(monster)){
+        if(initiative[0].equals(monster) && !defeat){
             playerTurn();
         }
         else{
@@ -139,8 +139,7 @@ public class Combat {
                 Magic spell = monster.useMagic();
                 if(spell instanceof DamageMagic){ choice = 1; }
                 else if(spell instanceof HealingMagic){ choice = 2; }
-                else if(spell instanceof UtilityMagic){ choice = 3; }
-                else{ throw new IllegalArgumentException("How did you fuck this up?");}
+                else{ choice = 3; }
                 useMagic(monster, pc, choice);
             }
         }
@@ -229,7 +228,7 @@ public class Combat {
             if(utilityChange > 0){
                 target = user;
             }
-            ModChange modChange = new ModChange(round, 5, utilityChange, target, utilityMod);
+            ModChange modChange = new ModChange(round, user.getLvl(), utilityChange, target, utilityMod);
             modChanges.add(modChange);
             modChange.changeMod();
             user.modifyCurrentMana(uSpell.getSpellCost() *-1);
