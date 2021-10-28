@@ -72,10 +72,10 @@ public class SpellBookTest {
         assertThat(thrown.getMessage(), is(equalTo("Cost of spell cannot be under 0 or over 100")));
     }
 
-    //@Test
-    //public void testOwnership(){
-    //    assertThat(correctSpellBook.getOwner(), is(equalTo(character)));
-    //}
+    @Test
+    public void testOwnership(){
+        assertThat(correctSpellBook.getOwner(), is(equalTo(character)));
+    }
 
     @Test
     public void testPickUpSpell(){
@@ -258,7 +258,6 @@ public class SpellBookTest {
     @Test
     public void testUseDamageSpell(){
         DamageMagic damageMagic1 = new DamageMagic(10, "Dark", "DarkMagic", 5, 10);
-
         correctSpellBook.equipDamageSpell(damageMagic1);
 
         DamageMagic damageMagicCopy = correctSpellBook.useDamageSpell();
