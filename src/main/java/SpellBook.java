@@ -161,7 +161,7 @@ public class SpellBook {
         utilitySlot = utilitySpell;
 
         int characterLevel = owner.getLvl();
-        utilitySpell.setUtilityValue(characterLevel);
+        utilitySlot.setUtilityValue(characterLevel);
     }
 
     // Tar av nuvarande funktionalitetsmagi

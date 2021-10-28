@@ -3,15 +3,14 @@
 public class UtilityMagic extends Magic {
 
     // Värde
-    private int utilityValue;
+    private double utilityValue;
     private final String utilityType;
 
     // Konstruktor
-    public UtilityMagic(int spellCost, String spellName, int utilityValue, String type){
+    public UtilityMagic(int spellCost, String spellName, double utilityValue, String type){
         super(spellCost, spellName);
         this.utilityType = type;
         this.utilityValue = utilityValue;
-
     }
 
     // Set-metod.
@@ -20,11 +19,12 @@ public class UtilityMagic extends Magic {
             throw new IllegalArgumentException("Value cannot be lower than zero");
         }
         this.utilityValue *= amount;
+
     }
 
     // Get-metod
-    public int getUtilityValue() {
-        return utilityValue;
+    public double getUtilityValue() {
+        return this.utilityValue;
     }
 
     // Get-metod

@@ -166,9 +166,10 @@ public class SpellBookTest {
         correctSpellBook.equipDamageSpell(damageMagic2);
 
         List<Magic> listOfMagic = correctSpellBook.getSpellBook();
+        DamageMagic correctDamageMagic = correctSpellBook.getDamageSlot();
 
-        assertThat(listOfMagic.get(0), is(equalTo(damageMagic1)));
-        assertThat(correctSpellBook.getDamageSlot(), is(equalTo(damageMagic2)));
+        assertThat(listOfMagic, hasItem(damageMagic1));
+        assertThat(correctDamageMagic, is(equalTo(damageMagic2)));
     }
 
     @Test

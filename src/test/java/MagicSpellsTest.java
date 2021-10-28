@@ -68,6 +68,19 @@ public class MagicSpellsTest {
     }
 
     @Test
+    public void testSetNewUtilityValue(){
+        utilityMagic.setUtilityValue(2);
+        double value = utilityMagic.getUtilityValue();
+        assertThat(value, is(70.0));
+    }
+
+    @Test
+    public void testGetUtilityValue(){
+
+        assertEquals(35, utilityMagic.getUtilityValue());
+    }
+
+    @Test
     public void testRestoreHealth(){
         assertThat(healingMagic.restoreHealth(), is(15));
     }
@@ -104,11 +117,6 @@ public class MagicSpellsTest {
     @Test
     public void testGetUtilityType(){
         assertThat(utilityMagic.getUtilityType(), is("Evs"));
-    }
-
-    @Test
-    public void testGetUtilityValue(){
-        assertThat(utilityMagic.getUtilityValue(), is(35));
     }
 
     @Test
