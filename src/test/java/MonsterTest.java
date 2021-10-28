@@ -21,7 +21,7 @@ public class MonsterTest {
     void setUp(){
         damageMagic = new DamageMagic(15, "Dark", "DamageM", 15, 25);
         healingMagic = new HealingMagic(10, "HealingM", 10, 30);
-        utilityMagic = new UtilityMagic(20, "UtilityM", 50);
+        utilityMagic = new UtilityMagic(20, "UtilityM", 50, "Evs");
         actualGoblin = new Monster(10,9,8,7,5,6,4,"GoblinOne", 1, "Goblin");
     }
 

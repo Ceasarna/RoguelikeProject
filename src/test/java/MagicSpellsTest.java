@@ -22,7 +22,7 @@ public class MagicSpellsTest {
     void setUp(){
         damageMagic = new DamageMagic(10, "Dark", "Spelly", 10, 25);
         healingMagic = new HealingMagic(10, "name", 10, 20);
-        utilityMagic = new UtilityMagic(15, "Meh", 35);
+        utilityMagic = new UtilityMagic(15, "Meh", 35, "Evs");
     }
 
     @Test
@@ -99,6 +99,11 @@ public class MagicSpellsTest {
         String errorMessage = "Value cannot be lower than zero";
         Throwable thrown = assertThrows(IllegalArgumentException.class, () -> utilityMagic.setUtilityValue(-5));
         assertThat(thrown.getMessage(), is(errorMessage));
+    }
+
+    @Test
+    public void testGetUtilityType(){
+        assertThat(utilityMagic.getUtilityType(), is("Evs"));
     }
 
     @Test

@@ -4,11 +4,12 @@ public class UtilityMagic extends Magic {
 
     // Värde
     private int utilityValue;
+    private final String utilityType;
 
     // Konstruktor
-    public UtilityMagic(int spellCost, String spellName, int utilityValue){
+    public UtilityMagic(int spellCost, String spellName, int utilityValue, String type){
         super(spellCost, spellName);
-
+        this.utilityType = type;
         this.utilityValue = utilityValue;
 
     }
@@ -24,5 +25,10 @@ public class UtilityMagic extends Magic {
     // Get-metod
     public int getUtilityValue() {
         return utilityValue;
+    }
+
+    // Get-metod
+    public String getUtilityType(){
+        return utilityType;
     }
 }

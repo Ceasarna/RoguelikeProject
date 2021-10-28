@@ -26,7 +26,7 @@ public class SpellBookTest {
 
     @Test
     public void testSpellCostBoundaryLower(){
-        Magic utilityMagic = new UtilityMagic(0, "Util", 35);
+        Magic utilityMagic = new UtilityMagic(0, "Util", 35, "Evs");
         int expectedSpellCost = 0;
         assertThat(utilityMagic.getSpellCost(), is(equalTo(expectedSpellCost)));
 
@@ -34,7 +34,7 @@ public class SpellBookTest {
 
     @Test
     public void testSpellCostBoundaryUpper(){
-        Magic utilityMagic = new UtilityMagic(100, "Util", 35);
+        Magic utilityMagic = new UtilityMagic(100, "Util", 35, "Evs");
         int expectedSpellCost = 100;
         assertThat(utilityMagic.getSpellCost(), is(equalTo(expectedSpellCost)));
 
@@ -42,28 +42,28 @@ public class SpellBookTest {
 
     @Test
     public void testSpellCost(){
-        Magic utilityMagic = new UtilityMagic(50, "Util", 35);
+        Magic utilityMagic = new UtilityMagic(50, "Util", 35, "Evs");
         int expectedSpellCost = 50;
         assertThat(utilityMagic.getSpellCost(), is(equalTo(expectedSpellCost)));
     }
 
     @Test
     public void testSpellName(){
-        Magic utilityMagic = new UtilityMagic(10, "Util", 35);
+        Magic utilityMagic = new UtilityMagic(10, "Util", 35, "Evs");
         String expectedSpellName = "Util";
         assertThat(utilityMagic.getSpellName(), is(equalTo(expectedSpellName)));
     }
 
     @Test
     public void testTooLowSpellCostException(){
-        Throwable thrown = assertThrows(IllegalArgumentException.class, () -> new UtilityMagic(-5, "util", 50));
+        Throwable thrown = assertThrows(IllegalArgumentException.class, () -> new UtilityMagic(-5, "util", 50, "Evs"));
 
         assertThat(thrown.getMessage(), is(equalTo("Cost of spell cannot be under 0 or over 100")));
     }
 
     @Test
     public void testTooHighSpellCostException(){
-        Throwable thrown = assertThrows(IllegalArgumentException.class, () -> new UtilityMagic(150, "util", 50));
+        Throwable thrown = assertThrows(IllegalArgumentException.class, () -> new UtilityMagic(150, "util", 50,"Evs"));
 
         assertThat(thrown.getMessage(), is(equalTo("Cost of spell cannot be under 0 or over 100")));
     }
@@ -75,7 +75,7 @@ public class SpellBookTest {
 
     @Test
     public void testPickUpSpell(){
-        UtilityMagic utilityMagic = new UtilityMagic(10, "h", 50);
+        UtilityMagic utilityMagic = new UtilityMagic(10, "h", 50,"Evs");
         correctSpellBook.pickUpSpell(utilityMagic);
         List<Magic> listOfSpellBook = correctSpellBook.getSpellBook();
 
@@ -87,7 +87,7 @@ public class SpellBookTest {
 
     @Test
     public void testDropSpell(){
-        UtilityMagic utilityMagic = new UtilityMagic(10, "h", 50);
+        UtilityMagic utilityMagic = new UtilityMagic(10, "h", 50,"Evs");
         correctSpellBook.pickUpSpell(utilityMagic);
         correctSpellBook.dropSpell(utilityMagic);
 
@@ -121,7 +121,7 @@ public class SpellBookTest {
 
     @Test
     public void testEquipUtilitySpellAndGetUtilitySlot(){
-        UtilityMagic utilityMagic = new UtilityMagic(25, "Utility", 30);
+        UtilityMagic utilityMagic = new UtilityMagic(25, "Utility", 30,"Evs");
 
         correctSpellBook.equipUtilitySpell(utilityMagic);
 
@@ -149,7 +149,7 @@ public class SpellBookTest {
 
     @Test
     public void testUnEquipUtilitySpellAndUtilitySlotIsNull(){
-        UtilityMagic utilityMagic = new UtilityMagic(25, "Utility", 35);
+        UtilityMagic utilityMagic = new UtilityMagic(25, "Utility", 35, "Evs");
         correctSpellBook.equipUtilitySpell(utilityMagic);
 
         correctSpellBook.unEquipUtilitySpell();
@@ -188,8 +188,8 @@ public class SpellBookTest {
 
     @Test
     public void testEquipUtilitySpellWhenUtilitySpellAlreadyEquippedAndPutFirstSpellIntoSpellBook(){
-        UtilityMagic utilityMagic1 = new UtilityMagic(25, "UtilityFirst", 50);
-        UtilityMagic utilityMagic2 = new UtilityMagic(40, "UtilitySecond", 60);
+        UtilityMagic utilityMagic1 = new UtilityMagic(25, "UtilityFirst", 50, "Evs");
+        UtilityMagic utilityMagic2 = new UtilityMagic(40, "UtilitySecond", 60, "Evs");
 
         correctSpellBook.equipUtilitySpell(utilityMagic1);
         correctSpellBook.equipUtilitySpell(utilityMagic2);
@@ -234,9 +234,9 @@ public class SpellBookTest {
         HealingMagic healingMagic1 = new HealingMagic(10, "HealingSpellFirst", 10, 15);
         HealingMagic healingMagic2 = new HealingMagic(15, "HealingSpellSecond", 15, 30);
 
-        UtilityMagic utilityMagic1 = new UtilityMagic(41, "UtilitySecond", 60);
-        UtilityMagic utilityMagic2 = new UtilityMagic(42, "UtilitySecond", 60);
-        UtilityMagic utilityMagic3 = new UtilityMagic(43, "UtilitySecond", 60);
+        UtilityMagic utilityMagic1 = new UtilityMagic(41, "UtilitySecond", 60, "Evs");
+        UtilityMagic utilityMagic2 = new UtilityMagic(42, "UtilitySecond", 60, "Evs");
+        UtilityMagic utilityMagic3 = new UtilityMagic(43, "UtilitySecond", 60, "Evs");
 
         correctSpellBook.equipDamageSpell(damageMagic1);
         correctSpellBook.equipDamageSpell(damageMagic2);
@@ -278,7 +278,7 @@ public class SpellBookTest {
 
     @Test
     public void testUseUtilitySpell(){
-        UtilityMagic utilityMagic2 = new UtilityMagic(40, "UtilitySecond", 60);
+        UtilityMagic utilityMagic2 = new UtilityMagic(40, "UtilitySecond", 60, "Evs");
 
         correctSpellBook.equipUtilitySpell(utilityMagic2);
 
