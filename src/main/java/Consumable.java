@@ -1,6 +1,6 @@
 public class Consumable extends Equipment{
-    String type;
-    int amount;
+    private final String type;
+    private final int amount;
 
     //Specific type of item that can be consumed, and disappears from backpack upon use.
     public Consumable(String name, String type, int amount) {

@@ -2,7 +2,7 @@ import java.util.Random;
 
 public class DiceRoller {
 
-    Random random = new Random();
+    final Random random = new Random();
 
     public int roll1d100(){
         return random.nextInt(100) + 1;
