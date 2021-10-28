@@ -159,8 +159,7 @@ private PlayerInput input;
     @Test
     public void pcInvalidChoice(){
         when(encounter.playerInput.getInput()).thenReturn(5);
-        Exception exception = assertThrows(IllegalArgumentException.class, () ->{
-            encounter.playerTurn();});
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> encounter.playerTurn());
         String expected = "That is not a valid action. Please try again.";
         String actual = exception.getMessage();
         assertTrue(actual.contains(expected));
