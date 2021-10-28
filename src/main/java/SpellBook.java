@@ -52,12 +52,15 @@ public class SpellBook {
         return Collections.unmodifiableList(spellBook);
     }
 
-    // Returnera en kopia av magin som gör skada, i användning för Combat metoder
+    // Get-metod
+    public Character getOwner(){
+        return this.owner;
+    }
+
+    // Returnera en damageSlot, i användning för Combat metoder
     public DamageMagic useDamageSpell(){
         checkDamageSlot();
-        DamageMagic copyDamageSlot = new DamageMagic(damageSlot);
-        unEquipDamageSpell();
-        return copyDamageSlot;
+        return getDamageSlot();
     }
 
     // Kollar att platsen för skademagi inte är null
@@ -70,9 +73,7 @@ public class SpellBook {
     // Returnerar en kopia av magin som återupphämtar, i användning för Combat metoder
     public HealingMagic useHealingSpell(){
         checkHealingSlot();
-        HealingMagic copyHealingSlot = new HealingMagic(healingSlot);
-        unEquipHealingSpell();
-        return copyHealingSlot;
+        return getHealingSlot();
     }
 
     // Kollar att platsen för återupphämtningsmagi inte är null
@@ -85,15 +86,13 @@ public class SpellBook {
     // Returnerar en kopia av magin för funktionallitet, i användning för Combat metoder
     public UtilityMagic useUtilitySpell(){
         checkUtilitySlot();
-        UtilityMagic copyUtilitySlot = new UtilityMagic(utilitySlot);
-        unEquipUtilitySpell();
-        return copyUtilitySlot;
+        return getUtilitySlot();
     }
 
     // Kollar att platsen för funktionallitetsmagi inte är null
     private void checkUtilitySlot(){
         if(utilitySlot == null){
-            throw new IllegalStateException("No utilityMagic is Equipped");
+            throw new IllegalStateException("No UtilityMagic is Equipped");
         }
     }
 
@@ -167,9 +166,7 @@ public class SpellBook {
 
     // Tar av nuvarande funktionallitetsmagi
     public void unEquipUtilitySpell(){
-        if(utilitySlot == null){
-            throw new IllegalStateException("No utilityMagic is Equipped");
-        }
+        checkUtilitySlot();
         spellBook.add(utilitySlot);
 
         double characterLevel = owner.getLvl();

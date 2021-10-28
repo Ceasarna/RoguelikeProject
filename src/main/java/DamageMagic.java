@@ -21,7 +21,6 @@ public class DamageMagic extends Magic{
                 break;
             }
         }
-
         if(this.damageType.equals("")){
             throw new IllegalArgumentException("SpellName must either be Light or Dark");
         }
@@ -34,14 +33,6 @@ public class DamageMagic extends Magic{
         }else{
             this.maxDmg = maxDmg;
         }
-    }
-
-    //Copy Constructor. Används för Combat
-    public DamageMagic(DamageMagic damageMagic){
-        super(damageMagic.getSpellCost(), damageMagic.getSpellName());
-        this.minDmg = damageMagic.minDmg;
-        this.maxDmg = damageMagic.maxDmg;
-        this.damageType = damageMagic.damageType;
     }
 
     // Metod för skada i Combat. Returnerar genomsnittet av min- och max skada
@@ -71,6 +62,10 @@ public class DamageMagic extends Magic{
      // Get-metod
     public double getMaxDmg() {
         return maxDmg;
+    }
+    // Get-Metod
+    public String getDamageType(){
+        return this.damageType;
     }
 
 }

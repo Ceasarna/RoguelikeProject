@@ -13,12 +13,6 @@ public class UtilityMagic extends Magic {
 
     }
 
-    //Copy Constructor. Används för Combat
-    public UtilityMagic(UtilityMagic utilityMagic){
-        super(utilityMagic.getSpellCost(), utilityMagic.getSpellName());
-        this.utilityValue = utilityMagic.utilityValue;
-    }
-
     // Set-metod.
     public void setUtilityValue(double amount){
         if(amount < 0 ) {
