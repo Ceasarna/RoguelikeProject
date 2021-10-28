@@ -3,15 +3,11 @@
 * Magic */
 
 import static org.hamcrest.CoreMatchers.*;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-import org.junit.Before;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 
-import javax.imageio.plugins.jpeg.JPEGHuffmanTable;
 
 import java.util.List;
 
@@ -81,9 +77,12 @@ public class SpellBookTest {
     public void testPickUpSpell(){
         UtilityMagic utilityMagic = new UtilityMagic(10, "h", 50);
         correctSpellBook.pickUpSpell(utilityMagic);
+        List<Magic> listOfSpellBook = correctSpellBook.getSpellBook();
+
 
         assertThat(correctSpellBook.getSpellBook().size(), is(1));
-        assertThat(correctSpellBook.getSpellBook().get(0), is(utilityMagic));
+        assertThat(listOfSpellBook, hasItem(utilityMagic));
+
     }
 
     @Test
@@ -98,12 +97,13 @@ public class SpellBookTest {
     @Test
     public void testThatThereExistsASpellBookInsideSpellBook(){
         assertThat(correctSpellBook.getSpellBook(), is(notNullValue()));
+
     }
 
     @Test
     public void testEquipDamageSpellAndGetDamageSlot(){
 
-        DamageMagic damageMagic = new DamageMagic(10, "Dark", "DarkMgaic", 5, 10);
+        DamageMagic damageMagic = new DamageMagic(10, "Dark", "DarkMagic", 5, 10);
 
         correctSpellBook.equipDamageSpell(damageMagic);
 
@@ -129,17 +129,17 @@ public class SpellBookTest {
     }
 
     @Test
-    public void testUnequipDamageSpellAndDamageSlotIsNull(){
-        DamageMagic damageMagic = new DamageMagic(10, "Dark", "DarkMgaic", 5, 10);
+    public void testUnEquipDamageSpellAndDamageSlotIsNull(){
+        DamageMagic damageMagic = new DamageMagic(10, "Dark", "DarkMagic", 5, 10);
         correctSpellBook.equipDamageSpell(damageMagic);
-
         correctSpellBook.unEquipDamageSpell();
+        DamageMagic shouldBeNull = correctSpellBook.getDamageSlot();
 
-        assertThat(correctSpellBook.getDamageSlot(), is(equalTo(null)));
+        assertThat("DamageSlot is not null", shouldBeNull, is(nullValue()));
     }
 
     @Test
-    public void testUnequipHealingSpellAndHealingslotIsNull(){
+    public void testUnEquipHealingSpellAndHealingSlotIsNull(){
         HealingMagic healingMagic = new HealingMagic(10, "HealingSpell", 10, 15);
         correctSpellBook.equipHealingSpell(healingMagic);
 
@@ -148,7 +148,7 @@ public class SpellBookTest {
         assertThat(correctSpellBook.getHealingSlot(), is(equalTo(null)));}
 
     @Test
-    public void testUnequipUtilitySpellAndUtilitySlotIsNull(){
+    public void testUnEquipUtilitySpellAndUtilitySlotIsNull(){
         UtilityMagic utilityMagic = new UtilityMagic(25, "Utility", 35);
         correctSpellBook.equipUtilitySpell(utilityMagic);
 
@@ -159,7 +159,7 @@ public class SpellBookTest {
 
     @Test
     public void testEquipDamageSpellWhenDamageSpellAlreadyEquippedAndPutFirstSpellIntoSpellBook(){
-        DamageMagic damageMagic1 = new DamageMagic(10, "Dark", "DarkMgaic", 5, 10);
+        DamageMagic damageMagic1 = new DamageMagic(10, "Dark", "DarkMagic", 5, 10);
         DamageMagic damageMagic2 = new DamageMagic(15, "Light", "LightMagic", 10, 15);
 
         correctSpellBook.equipDamageSpell(damageMagic1);
