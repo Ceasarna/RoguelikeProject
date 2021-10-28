@@ -1,3 +1,4 @@
+//En klass som används för att hålla koll på tillfälliga ändringar i mods under strider.
 public class ModChange {
     final int round;
     final int roundEnd;
@@ -13,6 +14,7 @@ public class ModChange {
         this.mod = mod;
     }
 
+    //Samling get-metoder
     public int getRoundEnd(){
         return roundEnd;
     }
@@ -23,6 +25,7 @@ public class ModChange {
 
     public int getChange(){ return change; }
 
+    //Används när en modChange skapas, och ser till att karaktärens mods ändras.
     public void changeMod(){
         if(mod.equals("Evs")){
             character.modifyCurrentEvsMod(change);
@@ -38,6 +41,7 @@ public class ModChange {
         }
     }
 
+    //Används när modden ska återgå till hur det var innan, använder två argument.
     public void changeMod(String mod, int change) {
         if (mod.equals("Evs")) {
             character.modifyCurrentEvsMod(change);
