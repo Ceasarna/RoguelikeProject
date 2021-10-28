@@ -106,4 +106,11 @@ public class EquipmentTest {
         assertEquals(expectedMana, player.getMana());
     }
 
+    @Test
+    public void testConsumeManaPotionRemovesItem(){
+        player.modifyCurrentMana(-20);
+        manaPotion.useItem(player);
+        assertFalse(player.getInventory().getBackpack().contains(manaPotion));
+    }
+
 }
