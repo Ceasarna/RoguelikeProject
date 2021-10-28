@@ -5,7 +5,7 @@ public class Combat {
     final PlayerCharacter pc;
     final Monster monster;
     int round = 0;
-    final Character[] initiative;
+    Character[] initiative;
     boolean victory = false;
     boolean defeat;
     DiceRoller diceRoller = new DiceRoller();
@@ -160,6 +160,7 @@ public class Combat {
             initiative[0] = monster;
             initiative[1] = pc;
         }
+        this.initiative = initiative;
         return initiative;
     }
 
