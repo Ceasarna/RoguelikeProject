@@ -69,7 +69,6 @@ public class Combat {
         System.out.println("What do you want to do? Type the number of the action.");
         System.out.println("1. Attack \n2. Dodge \n3. Use Item \n4. Magic");
         PlayerInput input = new PlayerInput();
-        input.setInput();
         command = input.getInput();
         if (command < 1 || command > 4) {
             throw new IllegalArgumentException("That is not a valid action. Please try again.");
@@ -118,7 +117,6 @@ public class Combat {
             }
             int choice = 0;
             PlayerInput input = new PlayerInput();
-            input.setInput();
             choice = input.getInput();
             if (choice < 1 || choice > pc.getInventory().getBackpack().size()) {
                 throw new NoSuchElementException("Please chose a valid item.");
@@ -136,7 +134,6 @@ public class Combat {
                         pc.getSpellBook().getUtilitySlot().getSpellName());
                 int choice = 0;
                 PlayerInput input = new PlayerInput();
-                input.setInput();
                 choice = input.getInput();
 
                 if (choice < 1 || choice > 3) {
@@ -271,6 +268,7 @@ public class Combat {
         }
         else{
             System.out.println("Your journey ends.");
+            victory = true;
             endGame();
         }
     }

@@ -116,14 +116,14 @@ private PlayerInput input;
     public void pcAttackHit(){
         when(diceRoller.roll1d100()).thenReturn(60);
         when(diceRoller.rollWithinRange(2, 4)).thenReturn(4);
-        encounter.attack(pc, monster);
+        encounter.turn(pc, monster, 1);
         assertEquals(56, monster.getCurrentHealth());
     }
 
     @Test
     public void pcAttackMiss(){
         when(diceRoller.roll1d100()).thenReturn(5);
-        encounter.attack(pc, monster);
+        encounter.turn(pc, monster, 1);
         assertEquals(60, monster.getCurrentHealth());
     }
 
@@ -131,44 +131,27 @@ private PlayerInput input;
     public void monsterAttackHit(){
         when(diceRoller.roll1d100()).thenReturn(50);
         when(diceRoller.rollWithinRange(5, 7)).thenReturn(5);
-        encounter.attack(monster, pc);
+        encounter.turn(monster, pc, 1);
         assertEquals(45, pc.getCurrentHealth());
     }
 
     @Test
     public void monsterAttackMiss(){
         when(diceRoller.roll1d100()).thenReturn(5);
-        encounter.attack(monster, pc);
+        encounter.turn(monster, pc, 1);
         assertEquals(50, pc.getCurrentHealth());
     }
 
     @Test
     public void pcDodge(){
-        encounter.dodge(pc);
+        encounter.turn(pc, monster, 2);
         assertEquals(120, pc.getCurrentEvsMod());
     }
 
     @Test
     public void monsterDodge(){
-        encounter.dodge(monster);
+        encounter.turn(monster, pc, 2);
         assertEquals(120, monster.getCurrentEvsMod());
-    }
-
-    @Test
-    public void pcAttackStart(){
-        when(diceRoller.roll1d100()).thenReturn(50);
-        when(diceRoller.rollWithinRange(2, 4)).thenReturn(4);
-
-        encounter.playerTurn();
-        assertEquals(56, monster.getCurrentHealth());
-    }
-
-    @Test
-    public void monsterAttackStart(){
-        when(diceRoller.roll1d100()).thenReturn(50);
-        when(diceRoller.rollWithinRange(5, 7)).thenReturn(6);
-        encounter.monsterTurn();
-        assertEquals(44, pc.getCurrentHealth());
     }
 
     @Test
@@ -198,9 +181,7 @@ private PlayerInput input;
 
     @Test
     public void pcHasNoItem(){
-        String input = "3";
-        InputStream in = new ByteArrayInputStream(input.getBytes());
-        System.setIn(in);
+        when(encounter.playerInput.getInput()).thenReturn(1);
         Exception exception = assertThrows(NoSuchElementException.class, () -> {
             encounter.turn(pc, monster, 3);});
         String expected = "You have no items.";
@@ -225,7 +206,6 @@ private PlayerInput input;
         assertEquals(0, pc.getGold());
         assertEquals(0, pc.getInventory().getBackpack().size());
     }
-
 
 
 }
