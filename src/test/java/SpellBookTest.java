@@ -78,6 +78,24 @@ public class SpellBookTest {
     //}
 
     @Test
+    public void testPickUpSpell(){
+        UtilityMagic utilityMagic = new UtilityMagic(10, "h", 50);
+        correctSpellBook.pickUpSpell(utilityMagic);
+
+        assertThat(correctSpellBook.getSpellBook().size(), is(1));
+        assertThat(correctSpellBook.getSpellBook().get(0), is(utilityMagic));
+    }
+
+    @Test
+    public void testDropSpell(){
+        UtilityMagic utilityMagic = new UtilityMagic(10, "h", 50);
+        correctSpellBook.pickUpSpell(utilityMagic);
+        correctSpellBook.dropSpell(utilityMagic);
+
+        assertThat(correctSpellBook.getSpellBook().size(), is(0));
+    }
+
+    @Test
     public void testThatThereExistsASpellBookInsideSpellBook(){
         assertThat(correctSpellBook.getSpellBook(), is(notNullValue()));
     }

@@ -3,10 +3,19 @@ Testar:
 Monster
  */
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.Before;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
+
+import javax.imageio.plugins.jpeg.JPEGHuffmanTable;
+
+import java.util.List;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class MonsterTest {
     Monster actualGoblin;
@@ -21,6 +30,34 @@ public class MonsterTest {
         utilityMagic = new UtilityMagic(20, "UtilityM", 50);
         actualGoblin = new Monster(10,9,8,7,5,6,4,"GoblinOne", 1, "Goblin");
     }
+
+    @Test
+    void testThatGetInventoryNotNull(){
+        assertNotNull(actualGoblin.getInventory());
+    }
+
+    @Test
+    void testGetMonsterType(){
+        assertThat(actualGoblin.getMonsterType(), is("Goblin"));
+    }
+
+    @Test
+    void testAddGold(){
+        actualGoblin.addGold(5);
+        assertThat(actualGoblin.getGold(), is(12));
+    }
+
+    @Test
+    void testGiveEXP(){
+        assertThat(actualGoblin.giveEXP(), is(100));
+    }
+
+    @Test
+    void testAddNegativeGoldException(){
+        Throwable thrown = assertThrows(IllegalArgumentException.class, () -> actualGoblin.addGold(-5));
+        assertThat(thrown.getMessage(), is("New gold must be positive"));
+    }
+
     @Test
     void testMonsterAtkMod(){
         int expectedAtkMod = 10;
@@ -185,4 +222,6 @@ public class MonsterTest {
         assertInstanceOf(UtilityMagic.class , actualMagic);
         assertEquals(expectedUtility, actualMagic);
     }
+
+
 }

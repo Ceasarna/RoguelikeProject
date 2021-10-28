@@ -7,7 +7,7 @@ public class Inventory {
 
     //Både ägaren och ryggsäcken behöver nås av PlayerInventory, därav protected
     protected Character owner;
-    protected ArrayList<Equipment> backpack = new ArrayList<>();
+    protected final ArrayList<Equipment> backpack = new ArrayList<>();
 
     //Konstruktorn
     public Inventory(Character owner){

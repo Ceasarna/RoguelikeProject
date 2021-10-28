@@ -21,13 +21,6 @@ public class HealingMagic extends Magic{
 
     }
 
-    //Copy Constructor. Används för Combat
-    public HealingMagic(HealingMagic healingMagic){
-        super(healingMagic.getSpellCost(), healingMagic.getSpellName());
-        this.minHeal = healingMagic.minHeal;
-        this.maxHeal = healingMagic.maxHeal;
-    }
-
     //Återhämtnings metod för Combat. Returnerar medelvärdet av min- och max Healing.
     public int restoreHealth(){
         return (int)(this.minHeal + this.maxHeal) / 2;

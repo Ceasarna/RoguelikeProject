@@ -11,7 +11,7 @@ public class PlayerCharacter extends Character {
     private int exp;
 
     //Spelarens inventory som är med avancerat än monsters inventory
-    protected PlayerInventory playerInventory;
+    protected final PlayerInventory playerInventory;
 
     //Konstruktorn för spelarkaraktären. Tar in samma värden med undantag för level som alltid börjar på 1
     public PlayerCharacter(int atkMod, int evsMod, int maxHealth, int gold, int baseDmgMin, int baseDmgMax, int spd, String name) {
