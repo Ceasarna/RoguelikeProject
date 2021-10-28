@@ -1,7 +1,5 @@
 // Ett utrymme för Monster att ha på sig rustning, samt ha olika typer av equipments inuti en Lista
 
-import java.util.List;
-
 public class MonsterInventory extends Inventory {
 
     // Monster kan enbart ha en rustning
@@ -17,7 +15,7 @@ public class MonsterInventory extends Inventory {
         return armourSlot;
     }
 
-    // Sätter vald Armour i Armour-platsen, samt lägger undan redan plaserad Armour ifall den existerar
+    // Sätter vald Armour i Armour-platsen, samt lägger undan redan placerad Armour ifall den existerar
     public void equipArmour(Armour e){
         if(armourSlot != null){
             unEquipArmour();

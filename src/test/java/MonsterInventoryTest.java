@@ -1,20 +1,14 @@
 /*  Testar:
 MonsterInventory */
 
-import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
-import net.bytebuddy.implementation.bind.MethodDelegationBinder;
-import org.junit.Before;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 
-import javax.imageio.plugins.jpeg.JPEGHuffmanTable;
-
-import java.util.List;
 
 public class MonsterInventoryTest {
 
@@ -36,7 +30,9 @@ public class MonsterInventoryTest {
     public void testUnEquippingArmour(){
         actualMonster.getInventory().equipArmour(armour);
         actualMonster.getInventory().unEquipArmour();
+        assertThat(actualMonster.getCurrentEvsMod(), is(9));
         assertNull(actualMonster.getInventory().getArmourSlot());
+
     }
 
     @Test
@@ -54,7 +50,7 @@ public class MonsterInventoryTest {
     }
 
     @Test
-    public void testUnequippingArmourWhenNoArmourEquippedException(){
+    public void testUnEquippingArmourWhenNoArmourEquippedException(){
         Throwable thrown = assertThrows(IllegalStateException.class, () -> actualMonster.getInventory().unEquipArmour());
         assertThat(thrown.getMessage(), is("No Armour is Equipped"));
     }

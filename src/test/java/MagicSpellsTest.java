@@ -3,18 +3,13 @@
  * HealingMagic
  * UtilityMagic */
 
-import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-import org.junit.Before;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 
-import javax.imageio.plugins.jpeg.JPEGHuffmanTable;
-
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -32,44 +27,44 @@ public class MagicSpellsTest {
 
     @Test
     public void testTypeOfDamageException(){
-        Throwable throwe = assertThrows(IllegalArgumentException.class, () -> new DamageMagic(10, "NotCorrect", "Spelly", 5, 10));
+        Throwable thrown = assertThrows(IllegalArgumentException.class, () -> new DamageMagic(10, "NotCorrect", "Spelly", 5, 10));
 
-        assertThat(throwe.getMessage(), is("SpellName must either be Light or Dark"));
+        assertThat(thrown.getMessage(), is("SpellName must either be Light or Dark"));
     }
 
     @Test
     public void testMinDamageHigherThanMaxDamageException(){
-        Throwable throwe = assertThrows(IllegalArgumentException.class, () -> new DamageMagic(10, "Light", "Spelly", 15, 10));
+        Throwable thrown = assertThrows(IllegalArgumentException.class, () -> new DamageMagic(10, "Light", "Spelly", 15, 10));
 
-        assertThat(throwe.getMessage(), is("MinDmg cannot be higher than MaxDmg"));
+        assertThat(thrown.getMessage(), is("MinDmg cannot be higher than MaxDmg"));
     }
 
     @Test
     public void testSetNegativeMinDamageException(){
-        Throwable throwe = assertThrows(IllegalArgumentException.class, () -> damageMagic.setMinDmg(-5));
+        Throwable thrown = assertThrows(IllegalArgumentException.class, () -> damageMagic.setMinDmg(-5));
 
-        assertThat(throwe.getMessage(), is("Value cannot be lower than zero"));
+        assertThat(thrown.getMessage(), is("Value cannot be lower than zero"));
     }
 
     @Test
     public void testSetNegativeMaxDamageException(){
-        Throwable throwe = assertThrows(IllegalArgumentException.class, () -> damageMagic.setMaxDmg(-5));
+        Throwable thrown = assertThrows(IllegalArgumentException.class, () -> damageMagic.setMaxDmg(-5));
 
-        assertThat(throwe.getMessage(), is("Value cannot be lower than zero"));
+        assertThat(thrown.getMessage(), is("Value cannot be lower than zero"));
     }
 
     @Test
     public void testSetNegativeMinHealingException(){
-        Throwable throwe = assertThrows(IllegalArgumentException.class, () -> new HealingMagic(10, "name", -5, 25));
+        Throwable thrown = assertThrows(IllegalArgumentException.class, () -> new HealingMagic(10, "name", -5, 25));
 
-        assertThat(throwe.getMessage(), is("MinHeal cannot be below Zero"));
+        assertThat(thrown.getMessage(), is("MinHeal cannot be below Zero"));
     }
 
     @Test
     public void testSetMinHealAboveMaxHeal(){
-        Throwable throwe = assertThrows(IllegalArgumentException.class, () -> new HealingMagic(10, "name", 10, 5));
+        Throwable thrown = assertThrows(IllegalArgumentException.class, () -> new HealingMagic(10, "name", 10, 5));
 
-        assertThat(throwe.getMessage(), is("MinHeal cannot be higher than MaxHeal"));
+        assertThat(thrown.getMessage(), is("MinHeal cannot be higher than MaxHeal"));
     }
 
     @Test
@@ -89,28 +84,29 @@ public class MagicSpellsTest {
 
     @Test
     public void testSetMinValueBelowZeroInSetterException(){
-        Throwable throwe = assertThrows(IllegalArgumentException.class, () -> healingMagic.setMinHeal(-5));
-        assertThat(throwe.getMessage(), is("Value cannot be lower than zero"));
+        Throwable thrown = assertThrows(IllegalArgumentException.class, () -> healingMagic.setMinHeal(-5));
+        assertThat(thrown.getMessage(), is("Value cannot be lower than zero"));
     }
 
     @Test
     public void testSetMaxValueBelowZeroInSetterException(){
-        Throwable throwe = assertThrows(IllegalArgumentException.class, () -> healingMagic.setMaxHeal(-5));
-        assertThat(throwe.getMessage(), is("Value cannot be lower than zero"));
+        Throwable thrown = assertThrows(IllegalArgumentException.class, () -> healingMagic.setMaxHeal(-5));
+        assertThat(thrown.getMessage(), is("Value cannot be lower than zero"));
     }
 
     @Test
     public void testSetUtilityValueBelowZeroException(){
-        Throwable throwe = assertThrows(IllegalArgumentException.class, () -> utilityMagic.setUtilityValue(-5));
-        assertThat(throwe.getMessage(), is("Value cannot be lower than zero"));
+        String errorMessage = "Value cannot be lower than zero";
+        Throwable thrown = assertThrows(IllegalArgumentException.class, () -> utilityMagic.setUtilityValue(-5));
+        assertThat(thrown.getMessage(), is(errorMessage));
     }
-
 
     @Test
     public void testGetUtilityValue(){
         assertThat(utilityMagic.getUtilityValue(), is(35));
     }
-        @Test
+
+    @Test
     public void testDealDamage(){
         assertThat(damageMagic.dealDamage(), is(equalTo(17)));
     }

@@ -18,7 +18,7 @@ public class Monster extends Character{
     private int queuedDecision = 0;
 
     // Attribut för vilken typ av monster som instansieras i konstruktorn
-    protected String monsterType;
+    protected final String monsterType;
 
     // Konstruktor. Skapar Tomma utrymmen för inventory samt spellBook
     public Monster(int atkMod, int evsMod, int maxHealth, int gold, int baseDmgMin, int baseDmgMax, int spd, String name, int lvl, String monsterType){

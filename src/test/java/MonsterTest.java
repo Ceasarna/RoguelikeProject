@@ -3,18 +3,12 @@ Testar:
 Monster
  */
 
-import static org.hamcrest.CoreMatchers.*;
-import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-import org.junit.Before;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 
-import javax.imageio.plugins.jpeg.JPEGHuffmanTable;
-
-import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class MonsterTest {
@@ -114,7 +108,6 @@ public class MonsterTest {
 
         Magic actualMagicUsed = actualGoblin.useMagic();
         assertEquals(expectedHealingMagic, actualMagicUsed);
-
     }
 
     @Test

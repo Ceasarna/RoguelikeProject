@@ -6,7 +6,7 @@ import java.util.List;
 
 public class SpellBook {
 
-    // Plater för de olika typer av magi som en karaktär kan erhålla
+    // Platser för de olika typer av magi som en karaktär kan erhålla
     private DamageMagic damageSlot;
     private HealingMagic healingSlot;
     private UtilityMagic utilitySlot;
@@ -15,7 +15,7 @@ public class SpellBook {
     private final Character owner;
 
     // Lista som används för magi som spelaren vill behålla
-    ArrayList<Magic> spellBook = new ArrayList<>();
+    final ArrayList<Magic> spellBook = new ArrayList<>();
 
     // Konstruktor
     public SpellBook(Character owner){
@@ -83,20 +83,20 @@ public class SpellBook {
         }
     }
 
-    // Returnerar en kopia av magin för funktionallitet, i användning för Combat metoder
+    // Returnerar en kopia av magin för funktionalitet, i användning för Combat metoder
     public UtilityMagic useUtilitySpell(){
         checkUtilitySlot();
         return getUtilitySlot();
     }
 
-    // Kollar att platsen för funktionallitetsmagi inte är null
+    // Kollar att platsen för funktionalitetsmagi inte är null
     private void checkUtilitySlot(){
         if(utilitySlot == null){
             throw new IllegalStateException("No UtilityMagic is Equipped");
         }
     }
 
-    // Sätter vald skademagi i skademagi-platsen, samt lägger undan redan plaserad skademagi ifall den existerar
+    // Sätter vald skademagi i skademagi-platsen, samt lägger undan redan placerad skademagi ifall den existerar
     public void equipDamageSpell(DamageMagic dmgSpell){
         if(damageSlot != null){
             spellBook.add(damageSlot);
@@ -115,7 +115,7 @@ public class SpellBook {
         checkDamageSlot();
         spellBook.add(damageSlot);
 
-        //characterLevel sets new values inside the DamageMagic.
+        //characterLevel sätter nytt värde inuti DamageMagic.
         double characterLevel = owner.getLvl();
         damageSlot.setMinDmg( 1 / characterLevel);
         damageSlot.setMaxDmg( 1 / characterLevel);
@@ -123,7 +123,7 @@ public class SpellBook {
         damageSlot = null;
     }
 
-    // Sätter vald återhämtningsmagi i återhämtningsmagi-platsen, samt lägger undan redan plaserad
+    // Sätter vald återhämtningsmagi i återhämtningsmagi-platsen, samt lägger undan redan placerad
     // återhämtningsmagi ifall den existerar
     public void equipHealingSpell(HealingMagic healSpell){
         if(healingSlot != null){
@@ -132,7 +132,7 @@ public class SpellBook {
         spellBook.remove(healSpell);
         healingSlot = healSpell;
 
-        //characterLevel sets new values inside the HealingMagic.
+        //characterLevel sätter nya värdet inuti HealingMagic.
         int characterLevel = owner.getLvl();
         healingSlot.setMinHeal(characterLevel);
         healingSlot.setMaxHeal(characterLevel);
@@ -143,7 +143,7 @@ public class SpellBook {
         checkHealingSlot();
         spellBook.add(healingSlot);
 
-        //characterLevel sets new values inside the HealingMagic.
+        //characterLevel sätter nya värdet inuti HealingMagic.
         double characterLevel = owner.getLvl();
         healingSlot.setMinHeal( 1 / characterLevel);
         healingSlot.setMaxHeal( 1 / characterLevel);
@@ -151,8 +151,8 @@ public class SpellBook {
         healingSlot = null;
     }
 
-    // Sätter vald funktionallitetsmagi i funktionallitetsmagi-platsen, samt lägger undan redan plaserad
-    // funktionallitetsmagi ifall den existerar
+    // Sätter vald funktionalitetsmagi i funktionalitetsmagi-platsen, samt lägger undan redan placerad
+    // funktionalitetsmagi ifall den existerar
     public void equipUtilitySpell(UtilityMagic utilitySpell){
         if(utilitySlot != null){
             spellBook.add(utilitySlot);
@@ -164,7 +164,7 @@ public class SpellBook {
         utilitySpell.setUtilityValue(characterLevel);
     }
 
-    // Tar av nuvarande funktionallitetsmagi
+    // Tar av nuvarande funktionalitetsmagi
     public void unEquipUtilitySpell(){
         checkUtilitySlot();
         spellBook.add(utilitySlot);

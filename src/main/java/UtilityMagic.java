@@ -1,4 +1,4 @@
-// Funktionallitetsmagi. Används för att ändra på standard attribut.
+// Funktionalitetsmagi. Används för att ändra på standard attribut.
 
 public class UtilityMagic extends Magic {
 
