@@ -12,7 +12,7 @@ public class Monster extends Character{
     private static final int MAGIC_SPELL = 4;
 
     // SpellBook samt inventory. Kommer inte ändras.
-    private final Inventory inventory;
+    private final MonsterInventory inventory;
 
     // Värde för vad nästa val av agerande för monstret ska vara
     private int queuedDecision = 0;
@@ -24,11 +24,11 @@ public class Monster extends Character{
     public Monster(int atkMod, int evsMod, int maxHealth, int gold, int baseDmgMin, int baseDmgMax, int spd, String name, int lvl, String monsterType){
         super(atkMod, evsMod, maxHealth, gold, baseDmgMin, baseDmgMax, spd, name, lvl);
         this.monsterType = monsterType;
-        this.inventory = new Inventory(this);
+        this.inventory = new MonsterInventory(this);
     }
 
     // Get-metod
-    public Inventory getInventory(){ return this.inventory; }
+    public MonsterInventory getInventory(){ return this.inventory; }
 
     //Get-metod
     public String getMonsterType(){
@@ -37,7 +37,7 @@ public class Monster extends Character{
 
     // Lägger till pengar till monstret
     public void addGold(int newGold){
-        if(newGold < 1){
+        if(newGold < 0 ){
             throw new IllegalArgumentException("New gold must be positive");
         }
         gold += newGold;
